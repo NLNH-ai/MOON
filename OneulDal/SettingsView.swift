@@ -8,17 +8,19 @@ struct LocationPickerSheet: View {
 
     var body: some View {
         NavigationStack {
-            List(cities, id: \.self) { city in
-                Button {
-                    selectedCity = city
-                    dismiss()
-                } label: {
-                    HStack {
-                        Text(city)
-                        Spacer()
-                        if selectedCity == city {
-                            Image(systemName: "checkmark")
-                                .foregroundStyle(.moonGold)
+            List {
+                ForEach(cities, id: \.self) { city in
+                    Button {
+                        selectedCity = city
+                        dismiss()
+                    } label: {
+                        HStack {
+                            Text(city)
+                            Spacer()
+                            if selectedCity == city {
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(Color.moonGold)
+                            }
                         }
                     }
                 }
@@ -55,7 +57,7 @@ struct SettingsSheet: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .tint(.moonGold)
+            .tint(Color.moonGold)
             .navigationTitle("설정")
             .navigationBarTitleDisplayMode(.inline)
         }

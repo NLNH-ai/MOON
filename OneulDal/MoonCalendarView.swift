@@ -42,11 +42,11 @@ struct MoonCalendarView: View {
             VStack(spacing: 4) {
                 Text("2026년 7월")
                     .font(.title2.weight(.bold))
-                    .foregroundStyle(.moonText)
+                    .foregroundStyle(Color.moonText)
 
                 Text("서울 기준")
                     .font(.subheadline)
-                    .foregroundStyle(.moonSubtext)
+                    .foregroundStyle(Color.moonSubtext)
             }
 
             Spacer()
@@ -59,7 +59,7 @@ struct MoonCalendarView: View {
             }
             .accessibilityLabel("다음 날짜")
         }
-        .foregroundStyle(.moonGold)
+        .foregroundStyle(Color.moonGold)
     }
 
     private var weekdayHeader: some View {
@@ -67,7 +67,7 @@ struct MoonCalendarView: View {
             ForEach(weekdays, id: \.self) { weekday in
                 Text(weekday)
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(.moonSubtext)
+                    .foregroundStyle(Color.moonSubtext)
                     .frame(maxWidth: .infinity)
             }
         }
@@ -108,9 +108,9 @@ private struct CalendarMoonCell: View {
             VStack(spacing: 4) {
                 Text("\(day.day)")
                     .font(.caption.weight(.bold))
-                    .foregroundStyle(isToday ? .black : .moonText)
+                    .foregroundStyle(isToday ? Color.black : Color.moonText)
                     .frame(width: 22, height: 22)
-                    .background(isToday ? .moonGold : .clear, in: Circle())
+                    .background(isToday ? Color.moonGold : Color.clear, in: Circle())
 
                 Image("MoonWaxingGibbous")
                     .resizable()
@@ -123,15 +123,15 @@ private struct CalendarMoonCell: View {
                     .font(.system(size: 10, weight: day.isMajorPhase ? .bold : .regular))
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
-                    .foregroundStyle(day.isMajorPhase ? .moonGold : .moonSubtext)
+                    .foregroundStyle(day.isMajorPhase ? Color.moonGold : Color.moonSubtext)
             }
             .frame(maxWidth: .infinity, minHeight: 68)
             .background(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(isSelected ? .moonSurface2 : .clear)
+                    .fill(isSelected ? Color.moonSurface2 : Color.clear)
                     .overlay(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .stroke(isSelected ? .moonGold.opacity(0.55) : .clear, lineWidth: 1)
+                            .stroke(isSelected ? Color.moonGold.opacity(0.55) : Color.clear, lineWidth: 1)
                     )
             )
         }
@@ -157,15 +157,15 @@ private struct SelectedMoonDayPanel: View {
                     VStack(alignment: .leading, spacing: 6) {
                         Text(day.dateTitle)
                             .font(.headline)
-                            .foregroundStyle(.moonText)
+                            .foregroundStyle(Color.moonText)
 
                         Text(day.phaseNameKo)
                             .font(.title3.weight(.bold))
-                            .foregroundStyle(day.isMajorPhase ? .moonGold : .moonText)
+                            .foregroundStyle(day.isMajorPhase ? Color.moonGold : Color.moonText)
 
                         Text("\(day.brightnessText) · \(day.moonAgeText)")
                             .font(.subheadline)
-                            .foregroundStyle(.moonSubtext)
+                            .foregroundStyle(Color.moonSubtext)
                     }
 
                     Spacer()
@@ -188,7 +188,7 @@ private struct SelectedMoonDayPanel: View {
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)
                         .background(.white.opacity(0.08), in: Capsule())
-                        .foregroundStyle(.moonText)
+                        .foregroundStyle(Color.moonText)
                 }
             }
         }
@@ -203,11 +203,11 @@ private struct DetailMetric: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.caption)
-                .foregroundStyle(.moonSubtext)
+                .foregroundStyle(Color.moonSubtext)
 
             Text(value)
                 .font(.headline.monospacedDigit())
-                .foregroundStyle(.moonText)
+                .foregroundStyle(Color.moonText)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

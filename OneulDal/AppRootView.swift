@@ -53,7 +53,7 @@ struct AppRootView: View {
                 }
                 .tag(AppTab.notifications)
         }
-        .tint(.moonGold)
+        .tint(Color.moonGold)
         .preferredColorScheme(.dark)
     }
 }

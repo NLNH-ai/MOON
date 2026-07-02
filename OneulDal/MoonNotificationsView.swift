@@ -36,11 +36,11 @@ struct MoonNotificationsView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("알림")
                 .font(.largeTitle.weight(.bold))
-                .foregroundStyle(.moonText)
+                .foregroundStyle(Color.moonText)
 
             Text("필요한 달 변화만 조용히 챙겨요.")
                 .font(.body)
-                .foregroundStyle(.moonSubtext)
+                .foregroundStyle(Color.moonSubtext)
         }
     }
 
@@ -83,11 +83,11 @@ struct MoonNotificationsView: View {
             VStack(alignment: .leading, spacing: 12) {
                 Text("권한은 나중에 요청")
                     .font(.headline)
-                    .foregroundStyle(.moonText)
+                    .foregroundStyle(Color.moonText)
 
                 Text("처음 실행하자마자 알림 권한을 요구하지 않고, 사용자가 알림을 켤 때 이유를 설명합니다.")
                     .font(.subheadline)
-                    .foregroundStyle(.moonSubtext)
+                    .foregroundStyle(Color.moonSubtext)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Button("권한 요청 미리보기") {
@@ -110,21 +110,21 @@ private struct NotificationToggleRow: View {
             HStack(spacing: 14) {
                 Image(systemName: symbol)
                     .font(.title3)
-                    .foregroundStyle(isOn ? .moonGold : .moonSubtext)
+                    .foregroundStyle(isOn ? Color.moonGold : Color.moonSubtext)
                     .frame(width: 32)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                         .font(.headline)
-                        .foregroundStyle(.moonText)
+                        .foregroundStyle(Color.moonText)
 
                     Text(subtitle)
                         .font(.subheadline)
-                        .foregroundStyle(.moonSubtext)
+                        .foregroundStyle(Color.moonSubtext)
                 }
             }
         }
-        .tint(.moonGold)
+        .tint(Color.moonGold)
         .padding(.vertical, 12)
     }
 }

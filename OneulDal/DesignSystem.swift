@@ -15,7 +15,7 @@ struct MoonBackground: View {
             LinearGradient(
                 colors: [
                     .black,
-                    .moonBackground,
+                    Color.moonBackground,
                     Color(red: 0.014, green: 0.027, blue: 0.059)
                 ],
                 startPoint: .top,
@@ -24,7 +24,7 @@ struct MoonBackground: View {
 
             RadialGradient(
                 colors: [
-                    .moonGold.opacity(0.22),
+                    Color.moonGold.opacity(0.22),
                     .clear
                 ],
                 center: .topTrailing,
@@ -55,7 +55,7 @@ struct GlassPanel<Content: View>: View {
             .padding(18)
             .background(
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(.moonSurface.opacity(0.82))
+                    .fill(Color.moonSurface.opacity(0.82))
                     .overlay(
                         RoundedRectangle(cornerRadius: 24, style: .continuous)
                             .stroke(.white.opacity(0.08), lineWidth: 1)
@@ -70,7 +70,7 @@ struct PillButtonStyle: ButtonStyle {
             .font(.callout.weight(.semibold))
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(.moonGold.opacity(configuration.isPressed ? 0.72 : 1), in: Capsule())
+            .background(Color.moonGold.opacity(configuration.isPressed ? 0.72 : 1), in: Capsule())
             .foregroundStyle(.black)
     }
 }

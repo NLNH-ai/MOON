@@ -32,7 +32,7 @@ struct TodayView: View {
 
                         Text("2026. 7. 2 오늘")
                             .font(.title3.weight(.medium))
-                            .foregroundStyle(.moonSubtext)
+                            .foregroundStyle(Color.moonSubtext)
                             .padding(.top, 10)
 
                         moonHero
@@ -67,14 +67,14 @@ struct TodayView: View {
             } label: {
                 Label(selectedCity, systemImage: "location.circle")
                     .font(.headline)
-                    .foregroundStyle(.moonText)
+                    .foregroundStyle(Color.moonText)
             }
 
             Spacer()
 
             Text("오늘달")
                 .font(.largeTitle.weight(.bold))
-                .foregroundStyle(.moonText)
+                .foregroundStyle(Color.moonText)
 
             Spacer()
 
@@ -83,7 +83,7 @@ struct TodayView: View {
             } label: {
                 Image(systemName: "gearshape")
                     .font(.title2.weight(.semibold))
-                    .foregroundStyle(.moonText)
+                    .foregroundStyle(Color.moonText)
                     .frame(width: 44, height: 44)
             }
             .accessibilityLabel("설정")
@@ -96,19 +96,19 @@ struct TodayView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(maxWidth: 300)
-                .shadow(color: .moonGold.opacity(0.28), radius: 26, x: 0, y: 0)
+                .shadow(color: Color.moonGold.opacity(0.28), radius: 26, x: 0, y: 0)
                 .accessibilityLabel("상현망간의 달 이미지")
 
             VStack(spacing: 8) {
                 Text(today.phaseNameKo)
                     .font(.system(size: 34, weight: .bold, design: .serif))
-                    .foregroundStyle(.moonGold)
+                    .foregroundStyle(Color.moonGold)
                     .minimumScaleFactor(0.8)
                     .lineLimit(1)
 
                 Text(today.phaseNameEn)
                     .font(.callout.weight(.medium))
-                    .foregroundStyle(.moonSubtext)
+                    .foregroundStyle(Color.moonSubtext)
             }
         }
     }
@@ -119,10 +119,10 @@ struct TodayView: View {
             Divider().background(.white.opacity(0.24))
             StatusMetric(symbol: "moon", text: today.moonAgeText)
             Divider().background(.white.opacity(0.24))
-            StatusMetric(symbol: "circle.fill", text: today.visibilityMessage, tint: .moonGold)
+            StatusMetric(symbol: "circle.fill", text: today.visibilityMessage, tint: Color.moonGold)
         }
         .frame(height: 42)
-        .foregroundStyle(.moonText)
+        .foregroundStyle(Color.moonText)
     }
 
     private var nextFullMoonCard: some View {
@@ -140,22 +140,22 @@ struct TodayView: View {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("다음 보름달")
                             .font(.title3.weight(.medium))
-                            .foregroundStyle(.moonText)
+                            .foregroundStyle(Color.moonText)
 
                         Text("7월 7일 화요일")
                             .font(.subheadline)
-                            .foregroundStyle(.moonSubtext)
+                            .foregroundStyle(Color.moonSubtext)
                     }
 
                     Spacer()
 
                     Text("D-5")
                         .font(.title.weight(.bold))
-                        .foregroundStyle(.moonGold)
+                        .foregroundStyle(Color.moonGold)
 
                     Image(systemName: "chevron.right")
                         .font(.title3.weight(.semibold))
-                        .foregroundStyle(.moonSubtext)
+                        .foregroundStyle(Color.moonSubtext)
                 }
             }
         }
@@ -168,7 +168,7 @@ struct TodayView: View {
             HStack {
                 Text("이번 달 미리보기")
                     .font(.headline)
-                    .foregroundStyle(.moonText)
+                    .foregroundStyle(Color.moonText)
 
                 Spacer()
 
@@ -176,7 +176,7 @@ struct TodayView: View {
                     selectedTab = .calendar
                 }
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.moonGold)
+                .foregroundStyle(Color.moonGold)
             }
 
             HStack(spacing: 12) {
@@ -186,9 +186,9 @@ struct TodayView: View {
                     VStack(spacing: 6) {
                         Text("\(day)")
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(day == today.day ? .black : .moonSubtext)
+                            .foregroundStyle(day == today.day ? Color.black : Color.moonSubtext)
                             .frame(width: 24, height: 24)
-                            .background(day == today.day ? .moonGold : .clear, in: Circle())
+                            .background(day == today.day ? Color.moonGold : Color.clear, in: Circle())
 
                         Image("MoonWaxingGibbous")
                             .resizable()
@@ -199,7 +199,7 @@ struct TodayView: View {
 
                         Text("\(moonDay.illumination)%")
                             .font(.caption2)
-                            .foregroundStyle(.moonSubtext)
+                            .foregroundStyle(Color.moonSubtext)
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -212,7 +212,7 @@ struct TodayView: View {
 private struct StatusMetric: View {
     let symbol: String
     let text: String
-    var tint: Color = .moonText
+    var tint: Color = Color.moonText
 
     var body: some View {
         HStack(spacing: 6) {
@@ -252,16 +252,16 @@ private struct TimeMetricView: View {
         VStack(spacing: 10) {
             Image(systemName: symbol)
                 .font(.title3.weight(.medium))
-                .foregroundStyle(.moonSubtext)
+                .foregroundStyle(Color.moonSubtext)
 
             Text(title)
                 .font(.headline)
-                .foregroundStyle(.moonSubtext)
+                .foregroundStyle(Color.moonSubtext)
 
             Text(time)
                 .font(.system(size: 32, weight: .medium, design: .serif))
                 .monospacedDigit()
-                .foregroundStyle(.moonText)
+                .foregroundStyle(Color.moonText)
                 .minimumScaleFactor(0.8)
                 .lineLimit(1)
         }
