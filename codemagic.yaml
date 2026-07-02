@@ -1,0 +1,208 @@
+workflows:
+  ios-simulator-prototype:
+    name: OneulDal iOS Simulator Prototype
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    environment:
+      xcode: latest
+      vars:
+        XCODE_PROJECT: OneulDal.xcodeproj
+        XCODE_SCHEME: OneulDal
+    scripts:
+      - name: Validate project files
+        script: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import plistlib
+          from pathlib import Path
+
+          root = Path(".")
+          required = [
+              "OneulDal.xcodeproj/project.pbxproj",
+              "OneulDal.xcodeproj/xcshareddata/xcschemes/OneulDal.xcscheme",
+              "OneulDal/OneulDalApp.swift",
+              "OneulDal/AppRootView.swift",
+              "OneulDal/TodayView.swift",
+              "OneulDal/MoonCalendarView.swift",
+              "OneulDal/MoonNotificationsView.swift",
+              "OneulDal/Assets.xcassets/MoonWaxingGibbous.imageset/moon-waxing-gibbous@3x.png",
+              "OneulDalTests/OneulDalTests.swift",
+          ]
+          missing = [path for path in required if not (root / path).exists()]
+          if missing:
+              raise SystemExit(f"Missing required files: {missing}")
+
+          for path in (root / "OneulDal/Assets.xcassets").glob("**/*.json"):
+              json.loads(path.read_text(encoding="utf-8"))
+          plistlib.loads((root / "OneulDal/Info.plist").read_bytes())
+          print("Project files, asset catalogs, and Info.plist are present.")
+          PY
+      - name: Pick available iPhone simulator
+        script: |
+          set -euo pipefail
+          SIMULATOR_NAME="${SIMULATOR_NAME:-$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/{gsub(/^[ \t]+|[ \t]+$/, "", $1); print $1; exit}')}"
+          if [ -z "$SIMULATOR_NAME" ]; then
+            echo "No available iPhone simulator found."
+            exit 1
+          fi
+          echo "Using simulator: $SIMULATOR_NAME"
+          echo "SIMULATOR_NAME=$SIMULATOR_NAME" >> "$CM_ENV"
+      - name: List schemes
+        script: |
+          set -euo pipefail
+          xcodebuild -list -project "$XCODE_PROJECT"
+      - name: Build for simulator
+        script: |
+          set -euo pipefail
+          mkdir -p "$CM_BUILD_DIR/build"
+          xcodebuild build-for-testing \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -destination "platform=iOS Simulator,name=$SIMULATOR_NAME,OS=latest" \
+            -derivedDataPath "$CM_BUILD_DIR/build/DerivedData" \
+            CODE_SIGNING_ALLOWED=NO
+      - name: Run unit tests
+        script: |
+          set -euo pipefail
+          xcodebuild test-without-building \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -destination "platform=iOS Simulator,name=$SIMULATOR_NAME,OS=latest" \
+            -derivedDataPath "$CM_BUILD_DIR/build/DerivedData" \
+            -resultBundlePath "$CM_BUILD_DIR/build/OneulDalTests.xcresult" \
+            CODE_SIGNING_ALLOWED=NO
+    artifacts:
+      - build/DerivedData/Build/Products/Debug-iphonesimulator/*.app
+      - build/*.xcresult
+      - /tmp/xcodebuild_logs/*.log
+
+  ios-testflight:
+    name: OneulDal iOS TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: oneuldal-app-store-connect
+    environment:
+      xcode: latest
+      vars:
+        APP_VERSION: "1.0.0"
+        BUNDLE_ID: "com.oneuldal.app"
+        XCODE_PROJECT: OneulDal.xcodeproj
+        XCODE_SCHEME: OneulDal
+        PROVISIONING_PROFILE_SPECIFIER: "OneulDal App Store Profile"
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.oneuldal.app
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: "ios-*"
+          include: true
+    scripts:
+      - name: Validate release environment
+        script: |
+          set -euo pipefail
+          : "${DEVELOPMENT_TEAM:?Set DEVELOPMENT_TEAM in Codemagic variables.}"
+          : "${PROVISIONING_PROFILE_SPECIFIER:?Set PROVISIONING_PROFILE_SPECIFIER in Codemagic variables.}"
+          xcodebuild -version
+          xcodebuild -list -project "$XCODE_PROJECT"
+      - name: Apply release signing settings
+        script: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          project_path = Path("OneulDal.xcodeproj/project.pbxproj")
+          project = project_path.read_text(encoding="utf-8")
+          bundle_id = os.environ["BUNDLE_ID"]
+          development_team = os.environ["DEVELOPMENT_TEAM"]
+          profile = os.environ["PROVISIONING_PROFILE_SPECIFIER"]
+          app_version = os.environ.get("APP_VERSION", "1.0.0")
+          build_number = os.environ.get("IOS_BUILD_NUMBER") or os.environ.get("BUILD_NUMBER") or "1"
+
+          project = re.sub(r"CURRENT_PROJECT_VERSION = [^;]+;", f"CURRENT_PROJECT_VERSION = {build_number};", project)
+          project = re.sub(r"MARKETING_VERSION = [^;]+;", f"MARKETING_VERSION = {app_version};", project)
+          project = re.sub(r"PRODUCT_BUNDLE_IDENTIFIER = com\.[^;]+;", f"PRODUCT_BUNDLE_IDENTIFIER = {bundle_id};", project)
+
+          def upsert(block, key, value):
+              pattern = re.compile(rf"(\n\s*){re.escape(key)} = [^;]+;")
+              if pattern.search(block):
+                  return pattern.sub(rf"\1{key} = {value};", block)
+              marker = re.search(r"\n(\s*)PRODUCT_BUNDLE_IDENTIFIER = [^;]+;", block)
+              if marker:
+                  indent = marker.group(1)
+                  return block.replace(marker.group(0), f"\n{indent}{key} = {value};{marker.group(0)}")
+              return block
+
+          def update_build_settings(match):
+              block = match.group(0)
+              if "PRODUCT_BUNDLE_IDENTIFIER" not in block:
+                  return block
+              block = upsert(block, "CODE_SIGN_IDENTITY", '"Apple Distribution"')
+              block = upsert(block, "CODE_SIGN_STYLE", "Manual")
+              block = upsert(block, "DEVELOPMENT_TEAM", development_team)
+              block = upsert(block, "PROVISIONING_PROFILE_SPECIFIER", f'"{profile}"')
+              return block
+
+          project = re.sub(r"buildSettings = \{[\s\S]*?\n\s*\};", update_build_settings, project)
+          project_path.write_text(project, encoding="utf-8")
+          print(f"Prepared {bundle_id} version {app_version} build {build_number}.")
+          PY
+      - name: Build signed archive
+        script: |
+          set -euo pipefail
+          mkdir -p "$CM_BUILD_DIR/build/ios/archive" "$CM_BUILD_DIR/build/ios/ipa"
+          xcodebuild archive \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination "generic/platform=iOS" \
+            -archivePath "$CM_BUILD_DIR/build/ios/archive/OneulDal.xcarchive"
+      - name: Export IPA
+        script: |
+          set -euo pipefail
+          cat > "$CM_BUILD_DIR/build/ios/exportOptions.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store-connect</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>teamID</key>
+            <string>$DEVELOPMENT_TEAM</string>
+            <key>signingCertificate</key>
+            <string>Apple Distribution</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>$BUNDLE_ID</key>
+              <string>$PROVISIONING_PROFILE_SPECIFIER</string>
+            </dict>
+            <key>stripSwiftSymbols</key>
+            <true/>
+            <key>compileBitcode</key>
+            <false/>
+          </dict>
+          </plist>
+          EOF
+          plutil -lint "$CM_BUILD_DIR/build/ios/exportOptions.plist"
+          xcodebuild -exportArchive \
+            -archivePath "$CM_BUILD_DIR/build/ios/archive/OneulDal.xcarchive" \
+            -exportOptionsPlist "$CM_BUILD_DIR/build/ios/exportOptions.plist" \
+            -exportPath "$CM_BUILD_DIR/build/ios/ipa"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - build/ios/exportOptions.plist
+      - build/ios/archive/*.xcarchive
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
