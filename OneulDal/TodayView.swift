@@ -38,7 +38,7 @@ struct TodayView: View {
                     }
                     .padding(.horizontal, 22)
                     .padding(.top, 18)
-                    .padding(.bottom, 34)
+                    .padding(.bottom, 56)
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
@@ -326,7 +326,7 @@ private struct MoonTimesPanel: View {
                 VerticalDivider()
                 TimeMetricView(symbol: "arrow.down", title: "월몰", time: day.moonset)
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, 2)
         }
     }
 }
@@ -337,7 +337,7 @@ private struct TimeMetricView: View {
     let time: String
 
     var body: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: 10) {
             Image(systemName: symbol)
                 .font(.system(size: 34, weight: .medium))
                 .foregroundStyle(Color.moonSubtext)
@@ -354,6 +354,7 @@ private struct TimeMetricView: View {
                 .foregroundStyle(Color.moonText)
                 .minimumScaleFactor(0.62)
                 .lineLimit(1)
+                .layoutPriority(1)
         }
         .frame(maxWidth: .infinity)
     }
@@ -363,8 +364,8 @@ private struct VerticalDivider: View {
     var body: some View {
         Rectangle()
             .fill(.white.opacity(0.12))
-            .frame(width: 1, height: 152)
-            .padding(.horizontal, 12)
+            .frame(width: 1, height: 132)
+            .padding(.horizontal, 8)
     }
 }
 
