@@ -26,7 +26,7 @@ enum AppTab: String, CaseIterable, Identifiable {
         case .calendar:
             return "calendar"
         case .notifications:
-            return "bell"
+            return "bell.fill"
         }
     }
 }
