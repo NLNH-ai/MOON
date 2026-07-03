@@ -376,7 +376,7 @@ private struct WeekMoonCell: View {
                     design: .rounded
                 ))
                 .foregroundStyle(
-                    isToday ? Color.moonText.opacity(0.92) : Color.moonSubtext.opacity(MoonLayout.previewMoonPercentOpacity)
+                    isToday ? Color.moonGold.opacity(0.96) : Color.moonSubtext.opacity(MoonLayout.previewMoonPercentOpacity)
                 )
                 .lineLimit(1)
                 .minimumScaleFactor(0.72)
