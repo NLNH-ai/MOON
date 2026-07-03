@@ -206,6 +206,7 @@ struct TodayView: View {
                             .background(Color.moonGold, in: Circle())
                     }
                 }
+                .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
             }
         }
         .buttonStyle(.plain)
@@ -213,48 +214,47 @@ struct TodayView: View {
     }
 
     private var monthPreview: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack {
-                Text("이번 달 미리보기")
-                    .font(.headline)
-                    .foregroundStyle(Color.moonText)
+        GlassPanel {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(alignment: .firstTextBaseline) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("이번 달 미리보기")
+                            .font(.headline.weight(.semibold))
+                            .foregroundStyle(Color.moonText)
 
-                Spacer()
-
-                Button("달력 전체 보기") {
-                    selectedTab = .calendar
-                }
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(Color.moonGold)
-            }
-
-            HStack(spacing: 12) {
-                ForEach(1...7, id: \.self) { day in
-                    let moonDay = MoonFixtures.day(for: day)
-
-                    VStack(spacing: 6) {
-                        Text("\(day)")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(day == today.day ? Color.black : Color.moonSubtext)
-                            .frame(width: 24, height: 24)
-                            .background(day == today.day ? Color.moonGold : Color.clear, in: Circle())
-
-                        Image("MoonWaxingGibbous")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 26, height: 26)
-                            .clipShape(Circle())
-                            .opacity(Double(moonDay.illumination) / 100.0)
-
-                        Text("\(moonDay.illumination)%")
-                            .font(.caption2)
+                        Text("보름까지 밝아지는 한 주")
+                            .font(.caption.weight(.medium))
                             .foregroundStyle(Color.moonSubtext)
                     }
-                    .frame(maxWidth: .infinity)
+
+                    Spacer()
+
+                    Button {
+                        selectedTab = .calendar
+                    } label: {
+                        Label("전체", systemImage: "calendar")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(Color.moonBackground)
+                            .padding(.horizontal, 10)
+                            .frame(height: 30)
+                            .background(Color.moonGold, in: Capsule())
+                    }
+                    .accessibilityLabel("달력 전체 보기")
+                }
+
+                HStack(spacing: 8) {
+                    ForEach(1...7, id: \.self) { day in
+                        let moonDay = MoonFixtures.day(for: day)
+
+                        WeekMoonCell(
+                            day: moonDay,
+                            isToday: day == today.day,
+                            isMilestone: moonDay.isMajorPhase
+                        )
+                    }
                 }
             }
         }
-        .padding(.top, 4)
     }
 }
 
@@ -285,6 +285,45 @@ private struct StatusMetric: View {
         .padding(.vertical, 9)
         .frame(maxWidth: .infinity)
         .background(Color.moonSurface.opacity(0.58), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+    }
+}
+
+private struct WeekMoonCell: View {
+    let day: MoonDay
+    let isToday: Bool
+    let isMilestone: Bool
+
+    var body: some View {
+        VStack(spacing: 7) {
+            Text("\(day.day)")
+                .font(.caption.weight(.bold))
+                .foregroundStyle(isToday ? Color.moonBackground : Color.moonSubtext)
+                .frame(width: 24, height: 24)
+                .background(isToday ? Color.moonGold : Color.clear, in: Circle())
+
+            Image("MoonWaxingGibbous")
+                .resizable()
+                .scaledToFill()
+                .frame(width: isMilestone ? 30 : 26, height: isMilestone ? 30 : 26)
+                .clipShape(Circle())
+                .opacity(max(0.42, Double(day.illumination) / 100.0))
+                .overlay(
+                    Circle()
+                        .stroke(isMilestone ? Color.moonGold.opacity(0.55) : Color.white.opacity(0.08), lineWidth: 1)
+                )
+
+            Text(isMilestone ? (day.majorPhaseLabel ?? "\(day.illumination)%") : "\(day.illumination)%")
+                .font(.caption2.weight(isMilestone ? .bold : .medium))
+                .foregroundStyle(isMilestone ? Color.moonGold : Color.moonSubtext)
+                .lineLimit(1)
+                .minimumScaleFactor(0.72)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 9)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(isToday ? Color.moonGold.opacity(0.08) : Color.white.opacity(0.035))
+        )
     }
 }
 
