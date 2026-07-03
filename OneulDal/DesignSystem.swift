@@ -19,7 +19,7 @@ enum MoonLayout {
     static let heroImageHorizontalInset: CGFloat = 30
     static let heroImageCornerRadius: CGFloat = 2
     static let heroImageBorderOpacity: Double = 0.03
-    static let heroImageShadowOpacity: Double = 0.08
+    static let heroImageShadowOpacity: Double = 0.11
     static let heroImageShadowRadius: CGFloat = 18
     static let heroImageShadowYOffset: CGFloat = 6
     static let nextMoonTitleTextSize: CGFloat = 30
