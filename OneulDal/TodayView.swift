@@ -99,7 +99,7 @@ struct TodayView: View {
         VStack(spacing: 16) {
             VStack(spacing: 12) {
                 Text("2026. 7. 2 오늘")
-                    .font(.system(size: 32, weight: .semibold, design: .rounded))
+                    .font(.system(size: MoonLayout.heroDateTextSize, weight: .semibold, design: .rounded))
                     .lineLimit(1)
                     .minimumScaleFactor(0.78)
                     .foregroundStyle(Color.moonSubtext)
