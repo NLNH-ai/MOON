@@ -12,13 +12,13 @@ struct MoonCalendarView: View {
                 MoonBackground()
 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 20) {
-                        calendarHeader
-                        weekdayHeader
-                        calendarGrid
+                    VStack(spacing: 18) {
+                        header
+                        monthNavigator
+                        calendarBoard
                         SelectedMoonDayPanel(day: selectedDay)
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 22)
                     .padding(.top, 18)
                     .padding(.bottom, 34)
                 }
@@ -27,39 +27,71 @@ struct MoonCalendarView: View {
         }
     }
 
-    private var calendarHeader: some View {
-        HStack {
-            Button {
-                selectedDay = MoonFixtures.day(for: max(1, selectedDay.day - 1))
-            } label: {
-                Image(systemName: "chevron.left")
-                    .frame(width: 40, height: 40)
-            }
-            .accessibilityLabel("이전 날짜")
-
-            Spacer()
-
-            VStack(spacing: 4) {
-                Text("2026년 7월")
-                    .font(.title2.weight(.bold))
-                    .foregroundStyle(Color.moonText)
-
-                Text("서울 기준")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.moonSubtext)
-            }
-
-            Spacer()
-
-            Button {
-                selectedDay = MoonFixtures.day(for: min(31, selectedDay.day + 1))
-            } label: {
-                Image(systemName: "chevron.right")
-                    .frame(width: 40, height: 40)
-            }
-            .accessibilityLabel("다음 날짜")
+    private var header: some View {
+        ScreenHeader(
+            title: "달력",
+            eyebrow: "2026년 7월",
+            subtitle: "서울 기준 월출과 달의 밝기를 한눈에 봅니다."
+        ) {
+            MoonChip("서울", symbolName: "location.fill", tint: Color.moonAqua)
         }
-        .foregroundStyle(Color.moonGold)
+    }
+
+    private var monthNavigator: some View {
+        GlassPanel {
+            HStack(spacing: 14) {
+                navigationButton(symbol: "chevron.left", accessibilityLabel: "이전 날짜") {
+                    selectedDay = MoonFixtures.day(for: max(1, selectedDay.day - 1))
+                }
+
+                VStack(spacing: 5) {
+                    Text(selectedDay.dateTitle)
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(Color.moonText)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.82)
+
+                    Text("\(selectedDay.phaseNameKo) · \(selectedDay.brightnessText)")
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(Color.moonSubtext)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.72)
+                }
+                .frame(maxWidth: .infinity)
+
+                navigationButton(symbol: "chevron.right", accessibilityLabel: "다음 날짜") {
+                    selectedDay = MoonFixtures.day(for: min(31, selectedDay.day + 1))
+                }
+            }
+        }
+    }
+
+    private func navigationButton(
+        symbol: String,
+        accessibilityLabel: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.headline.weight(.bold))
+                .foregroundStyle(Color.moonGold)
+                .frame(width: 38, height: 38)
+                .background(.white.opacity(0.07), in: Circle())
+                .overlay(
+                    Circle()
+                        .stroke(.white.opacity(0.08), lineWidth: 1)
+                )
+        }
+        .accessibilityLabel(accessibilityLabel)
+    }
+
+    private var calendarBoard: some View {
+        GlassPanel {
+            VStack(spacing: 12) {
+                weekdayHeader
+                calendarGrid
+            }
+        }
     }
 
     private var weekdayHeader: some View {
@@ -76,7 +108,7 @@ struct MoonCalendarView: View {
     private var calendarGrid: some View {
         let cells: [Int?] = Array(repeating: nil, count: leadingBlanks) + Array(1...31).map(Optional.some)
 
-        return LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 7), spacing: 10) {
+        return LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 7), spacing: 8) {
             ForEach(Array(cells.enumerated()), id: \.offset) { _, dayNumber in
                 if let dayNumber {
                     let day = MoonFixtures.day(for: dayNumber)
@@ -90,7 +122,7 @@ struct MoonCalendarView: View {
                     }
                 } else {
                     Color.clear
-                        .frame(height: 68)
+                        .frame(height: 64)
                 }
             }
         }
@@ -108,16 +140,20 @@ private struct CalendarMoonCell: View {
             VStack(spacing: 4) {
                 Text("\(day.day)")
                     .font(.caption.weight(.bold))
-                    .foregroundStyle(isToday ? Color.black : Color.moonText)
+                    .foregroundStyle(dayTextColor)
                     .frame(width: 22, height: 22)
                     .background(isToday ? Color.moonGold : Color.clear, in: Circle())
 
                 Image("MoonWaxingGibbous")
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 24, height: 24)
+                    .frame(width: isSelected || day.isMajorPhase ? 27 : 24, height: isSelected || day.isMajorPhase ? 27 : 24)
                     .clipShape(Circle())
-                    .opacity(max(0.28, Double(day.illumination) / 100.0))
+                    .opacity(max(0.34, Double(day.illumination) / 100.0))
+                    .overlay(
+                        Circle()
+                            .stroke(day.isMajorPhase ? Color.moonGold.opacity(0.5) : Color.white.opacity(0.07), lineWidth: 1)
+                    )
 
                 Text(day.majorPhaseLabel ?? "\(day.illumination)%")
                     .font(.system(size: 10, weight: day.isMajorPhase ? .bold : .regular))
@@ -125,18 +161,42 @@ private struct CalendarMoonCell: View {
                     .minimumScaleFactor(0.7)
                     .foregroundStyle(day.isMajorPhase ? Color.moonGold : Color.moonSubtext)
             }
-            .frame(maxWidth: .infinity, minHeight: 68)
+            .frame(maxWidth: .infinity, minHeight: 64)
             .background(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(isSelected ? Color.moonSurface2 : Color.clear)
+                    .fill(cellFill)
                     .overlay(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .stroke(isSelected ? Color.moonGold.opacity(0.55) : Color.clear, lineWidth: 1)
+                            .stroke(cellStroke, lineWidth: 1)
                     )
             )
         }
         .buttonStyle(.plain)
         .accessibilityLabel("\(day.dateTitle), \(day.phaseNameKo), \(day.brightnessText)")
+    }
+
+    private var dayTextColor: Color {
+        if isToday {
+            return Color.moonBackground
+        }
+
+        return isSelected ? Color.moonGold : Color.moonText
+    }
+
+    private var cellFill: Color {
+        if isSelected {
+            return Color.moonGold.opacity(0.11)
+        }
+
+        return isToday ? Color.moonGold.opacity(0.08) : Color.white.opacity(0.035)
+    }
+
+    private var cellStroke: Color {
+        if isSelected {
+            return Color.moonGold.opacity(0.55)
+        }
+
+        return isToday ? Color.moonGold.opacity(0.28) : Color.white.opacity(0.05)
     }
 }
 
@@ -153,22 +213,43 @@ private struct SelectedMoonDayPanel: View {
                         .frame(width: 74, height: 74)
                         .clipShape(Circle())
                         .opacity(max(0.35, Double(day.illumination) / 100.0))
+                        .overlay(
+                            Circle()
+                                .stroke(Color.moonGold.opacity(day.isMajorPhase ? 0.55 : 0.22), lineWidth: 1)
+                        )
 
                     VStack(alignment: .leading, spacing: 6) {
                         Text(day.dateTitle)
                             .font(.headline)
                             .foregroundStyle(Color.moonText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.82)
 
                         Text(day.phaseNameKo)
                             .font(.title3.weight(.bold))
                             .foregroundStyle(day.isMajorPhase ? Color.moonGold : Color.moonText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.78)
+
+                        Text(day.phaseNameEn)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(Color.moonSubtext)
+                            .lineLimit(1)
 
                         Text("\(day.brightnessText) · \(day.moonAgeText)")
                             .font(.subheadline)
                             .foregroundStyle(Color.moonSubtext)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.78)
                     }
 
                     Spacer()
+
+                    MoonChip(
+                        day.majorPhaseLabel ?? day.waxingText,
+                        symbolName: day.isWaxing ? "arrow.up.right" : "arrow.down.right",
+                        tint: day.isMajorPhase ? Color.moonGold : Color.moonAqua
+                    )
                 }
 
                 Divider().background(.white.opacity(0.12))
@@ -184,11 +265,7 @@ private struct SelectedMoonDayPanel: View {
                         .buttonStyle(PillButtonStyle())
 
                     Button("사진 모드") {}
-                        .font(.callout.weight(.semibold))
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                        .background(.white.opacity(0.08), in: Capsule())
-                        .foregroundStyle(Color.moonText)
+                        .buttonStyle(SecondaryPillButtonStyle())
                 }
             }
         }

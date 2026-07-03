@@ -5,6 +5,7 @@ extension Color {
     static let moonSurface = Color(red: 0.063, green: 0.094, blue: 0.145)
     static let moonSurface2 = Color(red: 0.086, green: 0.122, blue: 0.196)
     static let moonGold = Color(red: 0.905, green: 0.843, blue: 0.604)
+    static let moonAqua = Color(red: 0.392, green: 0.788, blue: 0.824)
     static let moonText = Color(red: 0.961, green: 0.969, blue: 0.984)
     static let moonSubtext = Color(red: 0.667, green: 0.706, blue: 0.773)
 }
@@ -64,6 +65,92 @@ struct GlassPanel<Content: View>: View {
     }
 }
 
+struct ScreenHeader<Accessory: View>: View {
+    let title: String
+    let eyebrow: String?
+    let subtitle: String
+    let accessory: Accessory
+
+    init(
+        title: String,
+        eyebrow: String? = nil,
+        subtitle: String,
+        @ViewBuilder accessory: () -> Accessory
+    ) {
+        self.title = title
+        self.eyebrow = eyebrow
+        self.subtitle = subtitle
+        self.accessory = accessory()
+    }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 14) {
+            VStack(alignment: .leading, spacing: 6) {
+                if let eyebrow {
+                    Text(eyebrow)
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(Color.moonGold)
+                        .textCase(.uppercase)
+                }
+
+                Text(title)
+                    .font(.system(size: 34, weight: .heavy, design: .rounded))
+                    .foregroundStyle(Color.moonText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.82)
+
+                Text(subtitle)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(Color.moonSubtext)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer(minLength: 8)
+
+            accessory
+        }
+    }
+}
+
+extension ScreenHeader where Accessory == EmptyView {
+    init(title: String, eyebrow: String? = nil, subtitle: String) {
+        self.title = title
+        self.eyebrow = eyebrow
+        self.subtitle = subtitle
+        self.accessory = EmptyView()
+    }
+}
+
+struct MoonChip: View {
+    let title: String
+    let symbolName: String?
+    var tint: Color = Color.moonGold
+
+    init(_ title: String, symbolName: String? = nil, tint: Color = Color.moonGold) {
+        self.title = title
+        self.symbolName = symbolName
+        self.tint = tint
+    }
+
+    var body: some View {
+        HStack(spacing: 6) {
+            if let symbolName {
+                Image(systemName: symbolName)
+                    .font(.caption.weight(.bold))
+            }
+
+            Text(title)
+                .font(.caption.weight(.bold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.74)
+        }
+        .foregroundStyle(Color.moonBackground)
+        .padding(.horizontal, 10)
+        .frame(height: 30)
+        .background(tint, in: Capsule())
+    }
+}
+
 struct PillButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -72,5 +159,20 @@ struct PillButtonStyle: ButtonStyle {
             .padding(.vertical, 10)
             .background(Color.moonGold.opacity(configuration.isPressed ? 0.72 : 1), in: Capsule())
             .foregroundStyle(.black)
+    }
+}
+
+struct SecondaryPillButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.callout.weight(.semibold))
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(.white.opacity(configuration.isPressed ? 0.13 : 0.08), in: Capsule())
+            .overlay(
+                Capsule()
+                    .stroke(.white.opacity(0.08), lineWidth: 1)
+            )
+            .foregroundStyle(Color.moonText)
     }
 }
