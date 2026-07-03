@@ -200,7 +200,7 @@ struct TodayView: View {
 
                     HStack(spacing: 10) {
                         Text("D-5")
-                            .font(.system(size: 36, weight: .heavy, design: .rounded))
+                            .font(.system(size: MoonLayout.nextMoonCountdownTextSize, weight: .heavy, design: .rounded))
                             .monospacedDigit()
                             .foregroundStyle(Color.moonGold)
                             .lineLimit(1)
