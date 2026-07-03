@@ -24,7 +24,9 @@ enum MoonLayout {
     static let statusDividerHeight: CGFloat = 52
     static let statusDividerHorizontalInset: CGFloat = 2
     static let statusDividerOpacity: Double = 0.12
-    static let timeDividerHorizontalInset: CGFloat = 5
+    static let timeDividerHeight: CGFloat = 126
+    static let timeDividerHorizontalInset: CGFloat = 4
+    static let timeDividerOpacity: Double = 0.10
 }
 
 struct MoonBackground: View {

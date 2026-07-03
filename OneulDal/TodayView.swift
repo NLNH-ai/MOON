@@ -434,8 +434,8 @@ private struct TimeMetricView: View {
 private struct VerticalDivider: View {
     var body: some View {
         Rectangle()
-            .fill(.white.opacity(0.12))
-            .frame(width: 1, height: 132)
+            .fill(.white.opacity(MoonLayout.timeDividerOpacity))
+            .frame(width: 1, height: MoonLayout.timeDividerHeight)
             .padding(.horizontal, MoonLayout.timeDividerHorizontalInset)
     }
 }
