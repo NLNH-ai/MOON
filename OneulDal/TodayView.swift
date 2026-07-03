@@ -109,16 +109,12 @@ struct TodayView: View {
     private var moonHero: some View {
         VStack(spacing: 16) {
             VStack(spacing: 12) {
-                HStack(spacing: 8) {
-                    Text("2026. 7. 2")
-                    Text("오늘")
-                        .foregroundStyle(Color.moonGold)
-                    Spacer()
-                    Text(today.waxingText)
-                }
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(Color.moonSubtext)
-                .textCase(.uppercase)
+                Text("2026. 7. 2 오늘")
+                    .font(.system(size: 24, weight: .semibold, design: .rounded))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.82)
+                    .foregroundStyle(Color.moonSubtext)
+                    .frame(maxWidth: .infinity)
 
                 Image("MoonWaxingGibbous")
                     .resizable()
@@ -149,20 +145,15 @@ struct TodayView: View {
     }
 
     private var statusRow: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 0) {
             StatusMetric(symbol: "sun.max", label: "밝기", value: "\(today.illumination)%")
+            StatusDivider()
             StatusMetric(symbol: "moon", label: "달령", value: String(format: "%.1f일", today.moonAge))
-            StatusMetric(symbol: "circle.fill", label: "상태", value: "떠 있음", tint: Color.moonGold)
+            StatusDivider()
+            StatusMetric(symbol: "circle.fill", label: "지금", value: "떠 있어요", tint: Color.moonGold)
         }
-        .padding(8)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(.black.opacity(0.18))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .stroke(.white.opacity(0.08), lineWidth: 1)
-                )
-        )
+        .padding(.vertical, 8)
+        .accessibilityElement(children: .combine)
     }
 
     private var nextFullMoonCard: some View {
@@ -267,24 +258,27 @@ private struct StatusMetric: View {
     var body: some View {
         HStack(spacing: 7) {
             Image(systemName: symbol)
+                .font(.title3.weight(.regular))
                 .foregroundStyle(tint)
 
-            VStack(alignment: .leading, spacing: 1) {
-                Text(label)
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(Color.moonSubtext)
-
-                Text(value)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color.moonText)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.76)
-            }
+            Text("\(label) \(value)")
+                .font(.system(size: 17, weight: .semibold, design: .rounded))
+                .foregroundStyle(Color.moonText)
+                .lineLimit(1)
+                .minimumScaleFactor(0.72)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 9)
         .frame(maxWidth: .infinity)
-        .background(Color.moonSurface.opacity(0.58), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label) \(value)")
+    }
+}
+
+private struct StatusDivider: View {
+    var body: some View {
+        Rectangle()
+            .fill(.white.opacity(0.16))
+            .frame(width: 1, height: 50)
+            .padding(.horizontal, 10)
     }
 }
 
