@@ -63,7 +63,8 @@ struct AppRootView: View {
     }
 
     private static func configureTabBarAppearance() {
-        let tabItemFont = UIFont.systemFont(ofSize: 13, weight: .semibold)
+        let selectedTabItemFont = UIFont.systemFont(ofSize: 13, weight: .semibold)
+        let normalTabItemFont = UIFont.systemFont(ofSize: 13, weight: .medium)
         let selectedColor = UIColor(red: 0.905, green: 0.843, blue: 0.604, alpha: 1)
         let normalColor = UIColor(red: 0.667, green: 0.706, blue: 0.773, alpha: 0.56)
         let tabBackground = UIColor(red: 0.030, green: 0.034, blue: 0.047, alpha: 0.86)
@@ -77,17 +78,20 @@ struct AppRootView: View {
         appearance.stackedLayoutAppearance = tabItemAppearance(
             selectedColor: selectedColor,
             normalColor: normalColor,
-            font: tabItemFont
+            selectedFont: selectedTabItemFont,
+            normalFont: normalTabItemFont
         )
         appearance.inlineLayoutAppearance = tabItemAppearance(
             selectedColor: selectedColor,
             normalColor: normalColor,
-            font: tabItemFont
+            selectedFont: selectedTabItemFont,
+            normalFont: normalTabItemFont
         )
         appearance.compactInlineLayoutAppearance = tabItemAppearance(
             selectedColor: selectedColor,
             normalColor: normalColor,
-            font: tabItemFont
+            selectedFont: selectedTabItemFont,
+            normalFont: normalTabItemFont
         )
 
         UITabBar.appearance().standardAppearance = appearance
@@ -98,18 +102,19 @@ struct AppRootView: View {
     private static func tabItemAppearance(
         selectedColor: UIColor,
         normalColor: UIColor,
-        font: UIFont
+        selectedFont: UIFont,
+        normalFont: UIFont
     ) -> UITabBarItemAppearance {
         let itemAppearance = UITabBarItemAppearance()
         itemAppearance.normal.iconColor = normalColor
         itemAppearance.normal.titleTextAttributes = [
             .foregroundColor: normalColor,
-            .font: font
+            .font: normalFont
         ]
         itemAppearance.selected.iconColor = selectedColor
         itemAppearance.selected.titleTextAttributes = [
             .foregroundColor: selectedColor,
-            .font: font
+            .font: selectedFont
         ]
         return itemAppearance
     }
