@@ -258,7 +258,7 @@ struct TodayView: View {
                 }
             }
         }
-        .padding(.top, 10)
+        .padding(.top, MoonLayout.monthPreviewTopPadding)
     }
 }
 
