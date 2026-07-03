@@ -55,7 +55,7 @@ enum MoonLayout {
     static let timeLabelTextSize: CGFloat = 25
     static let timeMetricStackSpacing: CGFloat = 12
     static let timeMetricLabelSpacing: CGFloat = 8
-    static let timeValueFontSize: CGFloat = 50
+    static let timeValueFontSize: CGFloat = 48
 }
 
 struct MoonBackground: View {
