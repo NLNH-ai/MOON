@@ -183,13 +183,14 @@ struct TodayView: View {
 
                     Spacer(minLength: 12)
 
-                    VStack(alignment: .trailing, spacing: 10) {
+                    HStack(spacing: 10) {
                         Text("D-5")
                             .font(.system(size: 36, weight: .heavy, design: .rounded))
                             .monospacedDigit()
                             .foregroundStyle(Color.moonGold)
                             .lineLimit(1)
                             .minimumScaleFactor(0.76)
+                            .layoutPriority(1)
 
                         Image(systemName: "chevron.right")
                             .font(.system(size: 21, weight: .semibold))
