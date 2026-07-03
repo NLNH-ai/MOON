@@ -69,7 +69,7 @@ struct TodayView: View {
                         .minimumScaleFactor(0.74)
                 }
                 .foregroundStyle(Color.moonText)
-                .frame(width: 88, height: 52, alignment: .leading)
+                .frame(width: MoonLayout.headerSideRailWidth, height: 52, alignment: .leading)
                 .contentShape(Rectangle())
             }
             .accessibilityLabel("지역 \(selectedCity)")
@@ -88,7 +88,7 @@ struct TodayView: View {
                     .font(.system(size: 34, weight: .semibold))
                     .foregroundStyle(Color.moonText)
                     .frame(width: 52, height: 52)
-                    .frame(width: 88, alignment: .trailing)
+                    .frame(width: MoonLayout.headerSideRailWidth, alignment: .trailing)
                     .contentShape(Rectangle())
             }
             .accessibilityLabel("설정")
