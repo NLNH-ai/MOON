@@ -203,52 +203,43 @@ struct TodayView: View {
     }
 
     private var monthPreview: some View {
-        GlassPanel {
-            VStack(alignment: .leading, spacing: 16) {
-                HStack(alignment: .firstTextBaseline) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("이번 달 미리보기")
-                            .font(.headline.weight(.semibold))
-                            .foregroundStyle(Color.moonText)
+        VStack(alignment: .leading, spacing: 18) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("이번 달 미리보기")
+                    .font(.system(size: 30, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color.moonText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.76)
 
-                        Text("보름까지 밝아지는 한 주")
-                            .font(.caption.weight(.medium))
-                            .foregroundStyle(Color.moonSubtext)
-                    }
+                Spacer(minLength: 12)
 
-                    Spacer()
-
-                    Button {
-                        selectedTab = .calendar
-                    } label: {
-                        Label {
-                            Text("달력 전체 보기")
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.78)
-                        } icon: {
-                            Image(systemName: "calendar")
-                        }
-                        .font(.subheadline.weight(.semibold))
+                Button {
+                    selectedTab = .calendar
+                } label: {
+                    Text("달력 전체 보기")
+                        .font(.system(size: 22, weight: .semibold, design: .rounded))
                         .foregroundStyle(Color.moonGold)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.72)
                         .padding(.vertical, 6)
                         .contentShape(Rectangle())
-                    }
-                    .accessibilityLabel("달력 전체 보기")
                 }
+                .accessibilityLabel("달력 전체 보기")
+            }
 
-                HStack(spacing: 8) {
-                    ForEach(1...7, id: \.self) { day in
-                        let moonDay = MoonFixtures.day(for: day)
+            HStack(spacing: 7) {
+                ForEach(1...7, id: \.self) { day in
+                    let moonDay = MoonFixtures.day(for: day)
 
-                        WeekMoonCell(
-                            day: moonDay,
-                            isToday: day == today.day,
-                            isMilestone: moonDay.isMajorPhase
-                        )
-                    }
+                    WeekMoonCell(
+                        day: moonDay,
+                        isToday: day == today.day,
+                        isMilestone: moonDay.isMajorPhase
+                    )
                 }
             }
         }
+        .padding(.top, 2)
     }
 }
 
@@ -291,17 +282,17 @@ private struct WeekMoonCell: View {
     let isMilestone: Bool
 
     var body: some View {
-        VStack(spacing: 7) {
+        VStack(spacing: 10) {
             Text("\(day.day)")
-                .font(.caption.weight(.bold))
+                .font(.system(size: 18, weight: .bold, design: .rounded))
                 .foregroundStyle(isToday ? Color.moonBackground : Color.moonSubtext)
-                .frame(width: 24, height: 24)
+                .frame(width: 32, height: 32)
                 .background(isToday ? Color.moonGold : Color.clear, in: Circle())
 
             Image("MoonWaxingGibbous")
                 .resizable()
                 .scaledToFill()
-                .frame(width: isMilestone ? 30 : 26, height: isMilestone ? 30 : 26)
+                .frame(width: isMilestone ? 38 : 34, height: isMilestone ? 38 : 34)
                 .clipShape(Circle())
                 .opacity(max(0.42, Double(day.illumination) / 100.0))
                 .overlay(
@@ -310,17 +301,13 @@ private struct WeekMoonCell: View {
                 )
 
             Text(isMilestone ? (day.majorPhaseLabel ?? "\(day.illumination)%") : "\(day.illumination)%")
-                .font(.caption2.weight(isMilestone ? .bold : .medium))
+                .font(.system(size: 17, weight: isMilestone ? .bold : .medium, design: .rounded))
                 .foregroundStyle(isMilestone ? Color.moonGold : Color.moonSubtext)
                 .lineLimit(1)
                 .minimumScaleFactor(0.72)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 9)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(isToday ? Color.moonGold.opacity(0.08) : Color.white.opacity(0.035))
-        )
+        .padding(.vertical, 2)
     }
 }
 
