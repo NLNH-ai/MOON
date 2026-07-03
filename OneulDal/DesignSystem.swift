@@ -12,7 +12,7 @@ extension Color {
 
 enum MoonLayout {
     static let cardCornerRadius: CGFloat = 30
-    static let headerSideRailWidth: CGFloat = 76
+    static let headerSideRailWidth: CGFloat = 84
     static let heroImageHorizontalInset: CGFloat = 30
     static let heroImageCornerRadius: CGFloat = 2
     static let heroImageBorderOpacity: Double = 0.03
