@@ -226,19 +226,13 @@ struct TodayView: View {
                 Button {
                     selectedTab = .calendar
                 } label: {
-                    HStack(spacing: 5) {
-                        Text("달력 전체 보기")
-                            .font(.system(size: 20, weight: .semibold, design: .rounded))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.68)
-
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 15, weight: .bold))
-                            .accessibilityHidden(true)
-                    }
-                    .foregroundStyle(Color.moonGold)
-                    .padding(.vertical, 6)
-                    .contentShape(Rectangle())
+                    Text("달력 전체 보기")
+                        .font(.system(size: 20, weight: .semibold, design: .rounded))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.68)
+                        .foregroundStyle(Color.moonGold)
+                        .padding(.vertical, 6)
+                        .contentShape(Rectangle())
                 }
                 .accessibilityLabel("달력 전체 보기")
             }
