@@ -62,9 +62,9 @@ struct TodayView: View {
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "location.north.circle")
-                        .font(.system(size: 24, weight: .semibold))
+                        .font(.system(size: MoonLayout.headerLocationTextSize, weight: .semibold))
                     Text(selectedCity)
-                        .font(.system(size: 24, weight: .semibold, design: .rounded))
+                        .font(.system(size: MoonLayout.headerLocationTextSize, weight: .semibold, design: .rounded))
                         .lineLimit(1)
                         .minimumScaleFactor(0.82)
                 }
