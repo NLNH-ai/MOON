@@ -173,6 +173,7 @@ private struct CalendarMoonCell: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel("\(day.dateTitle), \(day.phaseNameKo), \(day.brightnessText)")
+        .accessibilityHint("탭하면 이 날짜의 월출과 월몰 시간을 봅니다.")
     }
 
     private var dayTextColor: Color {

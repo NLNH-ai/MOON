@@ -125,11 +125,18 @@ struct MoonChip: View {
     let title: String
     let symbolName: String?
     var tint: Color = Color.moonGold
+    var accessibilityLabel: String?
 
-    init(_ title: String, symbolName: String? = nil, tint: Color = Color.moonGold) {
+    init(
+        _ title: String,
+        symbolName: String? = nil,
+        tint: Color = Color.moonGold,
+        accessibilityLabel: String? = nil
+    ) {
         self.title = title
         self.symbolName = symbolName
         self.tint = tint
+        self.accessibilityLabel = accessibilityLabel
     }
 
     var body: some View {
@@ -148,6 +155,8 @@ struct MoonChip: View {
         .padding(.horizontal, 10)
         .frame(height: 30)
         .background(tint, in: Capsule())
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityLabel ?? title)
     }
 }
 

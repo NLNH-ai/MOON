@@ -48,7 +48,7 @@ struct MoonNotificationsView: View {
     }
 
     private var statusStrip: some View {
-        HStack(spacing: 8) {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 104), spacing: 8)], spacing: 8) {
             ReminderStatusMetric(symbol: "moon.stars.fill", title: "주요 위상", value: fullMoonEnabled ? "대기 중" : "꺼짐")
             ReminderStatusMetric(symbol: "hand.raised.fill", title: "권한", value: "켤 때 요청", tint: Color.moonAqua)
             ReminderStatusMetric(symbol: "speaker.wave.2.fill", title: "소리", value: "조용히", tint: Color.moonSubtext)
@@ -204,6 +204,7 @@ private struct ReminderStatusMetric: View {
                 .minimumScaleFactor(0.72)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(minHeight: 92, alignment: .topLeading)
         .padding(12)
         .background(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
