@@ -12,6 +12,9 @@ extension Color {
 
 enum MoonLayout {
     static let cardCornerRadius: CGFloat = 30
+    static let glassPanelFillOpacity: Double = 0.86
+    static let glassPanelShadowOpacity: Double = 0.24
+    static let glassPanelBorderOpacity: Double = 0.10
     static let headerSideRailWidth: CGFloat = 84
     static let heroImageHorizontalInset: CGFloat = 30
     static let heroImageCornerRadius: CGFloat = 2
@@ -86,11 +89,11 @@ struct GlassPanel<Content: View>: View {
             .padding(18)
             .background(
                 RoundedRectangle(cornerRadius: MoonLayout.cardCornerRadius, style: .continuous)
-                    .fill(Color.moonSurface.opacity(0.82))
-                    .shadow(color: .black.opacity(0.24), radius: 18, x: 0, y: 10)
+                    .fill(Color.moonSurface.opacity(MoonLayout.glassPanelFillOpacity))
+                    .shadow(color: .black.opacity(MoonLayout.glassPanelShadowOpacity), radius: 18, x: 0, y: 10)
                     .overlay(
                         RoundedRectangle(cornerRadius: MoonLayout.cardCornerRadius, style: .continuous)
-                            .stroke(.white.opacity(0.08), lineWidth: 1)
+                            .stroke(.white.opacity(MoonLayout.glassPanelBorderOpacity), lineWidth: 1)
                     )
             )
     }
