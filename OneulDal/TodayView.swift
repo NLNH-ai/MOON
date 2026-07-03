@@ -286,7 +286,7 @@ private struct WeekMoonCell: View {
     let isMilestone: Bool
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 8) {
             Text("\(day.day)")
                 .font(.system(size: isToday ? 20 : 18, weight: .bold, design: .rounded))
                 .foregroundStyle(isToday ? Color.moonBackground : Color.moonSubtext)
