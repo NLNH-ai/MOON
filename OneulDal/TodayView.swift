@@ -318,7 +318,7 @@ private struct MoonTimesPanel: View {
 
     var body: some View {
         GlassPanel {
-            VStack(spacing: 16) {
+            VStack(spacing: 18) {
                 HStack {
                     Text("오늘의 달 시간")
                         .font(.headline.weight(.semibold))
@@ -349,20 +349,20 @@ private struct TimeMetricView: View {
     let time: String
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 12) {
             Image(systemName: symbol)
-                .font(.title3.weight(.medium))
+                .font(.system(size: 28, weight: .medium))
                 .foregroundStyle(Color.moonSubtext)
 
             Text(title)
-                .font(.headline)
+                .font(.title3.weight(.semibold))
                 .foregroundStyle(Color.moonSubtext)
 
             Text(time)
-                .font(.system(size: 30, weight: .semibold, design: .rounded))
+                .font(.system(size: 42, weight: .semibold, design: .rounded))
                 .monospacedDigit()
                 .foregroundStyle(Color.moonText)
-                .minimumScaleFactor(0.8)
+                .minimumScaleFactor(0.68)
                 .lineLimit(1)
         }
         .frame(maxWidth: .infinity)
@@ -373,7 +373,7 @@ private struct VerticalDivider: View {
     var body: some View {
         Rectangle()
             .fill(.white.opacity(0.12))
-            .frame(width: 1, height: 104)
+            .frame(width: 1, height: 128)
             .padding(.horizontal, 12)
     }
 }
