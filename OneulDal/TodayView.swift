@@ -292,9 +292,9 @@ private struct StatusMetric: View {
 private struct StatusDivider: View {
     var body: some View {
         Rectangle()
-            .fill(.white.opacity(0.16))
-            .frame(width: 1, height: 62)
-            .padding(.horizontal, 3)
+            .fill(.white.opacity(MoonLayout.statusDividerOpacity))
+            .frame(width: 1, height: MoonLayout.statusDividerHeight)
+            .padding(.horizontal, MoonLayout.statusDividerHorizontalInset)
     }
 }
 
