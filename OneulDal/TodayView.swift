@@ -153,42 +153,48 @@ struct TodayView: View {
             selectedTab = .calendar
         } label: {
             GlassPanel {
-                HStack(spacing: 16) {
+                HStack(spacing: 18) {
                     Image("MoonWaxingGibbous")
                         .resizable()
                         .scaledToFill()
-                        .frame(width: 62, height: 62)
+                        .frame(width: 74, height: 74)
                         .clipShape(Circle())
                         .overlay(
                             Circle()
-                                .stroke(Color.moonGold.opacity(0.28), lineWidth: 1)
+                                .stroke(Color.moonGold.opacity(0.34), lineWidth: 1)
                         )
 
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: 8) {
                         Text("다음 보름달")
-                            .font(.title3.weight(.medium))
+                            .font(.system(size: 26, weight: .semibold, design: .rounded))
                             .foregroundStyle(Color.moonText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.78)
 
-                        Text("7월 7일 화요일")
-                            .font(.subheadline)
+                        Text("7월 7일 화요일 · 보름")
+                            .font(.system(size: 17, weight: .medium, design: .rounded))
                             .foregroundStyle(Color.moonSubtext)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.82)
                     }
 
-                    Spacer()
+                    Spacer(minLength: 12)
 
-                    VStack(alignment: .trailing, spacing: 8) {
+                    VStack(alignment: .trailing, spacing: 10) {
                         Text("D-5")
-                            .font(.title.weight(.heavy))
+                            .font(.system(size: 36, weight: .heavy, design: .rounded))
                             .monospacedDigit()
                             .foregroundStyle(Color.moonGold)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.76)
 
                         Image(systemName: "chevron.right")
-                            .font(.headline.weight(.bold))
-                            .foregroundStyle(Color.moonBackground)
-                            .frame(width: 30, height: 30)
-                            .background(Color.moonGold, in: Circle())
+                            .font(.system(size: 21, weight: .semibold))
+                            .foregroundStyle(Color.moonSubtext)
+                            .frame(width: 32, height: 32)
                     }
                 }
+                .padding(.vertical, 4)
                 .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
             }
         }
@@ -215,12 +221,17 @@ struct TodayView: View {
                     Button {
                         selectedTab = .calendar
                     } label: {
-                        Label("전체", systemImage: "calendar")
-                            .font(.caption.weight(.bold))
-                            .foregroundStyle(Color.moonBackground)
-                            .padding(.horizontal, 10)
-                            .frame(height: 30)
-                            .background(Color.moonGold, in: Capsule())
+                        Label {
+                            Text("달력 전체 보기")
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.78)
+                        } icon: {
+                            Image(systemName: "calendar")
+                        }
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Color.moonGold)
+                        .padding(.vertical, 6)
+                        .contentShape(Rectangle())
                     }
                     .accessibilityLabel("달력 전체 보기")
                 }
