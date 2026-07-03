@@ -411,8 +411,8 @@ private struct TimeMetricView: View {
     let time: String
 
     var body: some View {
-        VStack(spacing: 14) {
-            VStack(spacing: 7) {
+        VStack(spacing: MoonLayout.timeMetricStackSpacing) {
+            VStack(spacing: MoonLayout.timeMetricLabelSpacing) {
                 Image(systemName: symbol)
                     .font(.system(size: MoonLayout.timeIconSize, weight: .medium))
                     .foregroundStyle(Color.moonSubtext)
