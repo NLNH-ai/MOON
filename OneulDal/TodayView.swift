@@ -225,7 +225,7 @@ struct TodayView: View {
         VStack(alignment: .leading, spacing: 18) {
             HStack(alignment: .firstTextBaseline) {
                 Text("이번 달 미리보기")
-                    .font(.system(size: 30, weight: .semibold, design: .rounded))
+                    .font(.system(size: MoonLayout.monthPreviewTitleTextSize, weight: .semibold, design: .rounded))
                     .foregroundStyle(Color.moonText)
                     .lineLimit(1)
                     .minimumScaleFactor(0.76)
