@@ -75,7 +75,7 @@ struct TodayView: View {
             .accessibilityLabel("지역 \(selectedCity)")
 
             Text("오늘달")
-                .font(.system(size: 56, weight: .heavy, design: .rounded))
+                .font(.system(size: MoonLayout.headerTitleTextSize, weight: .heavy, design: .rounded))
                 .foregroundStyle(Color.moonText)
                 .lineLimit(1)
                 .minimumScaleFactor(0.68)
