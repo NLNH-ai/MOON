@@ -171,7 +171,7 @@ struct TodayView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.78)
 
-                        Text("7월 7일 화요일 · 보름")
+                        Text("7월 7일 화요일")
                             .font(.system(size: 17, weight: .medium, design: .rounded))
                             .foregroundStyle(Color.moonSubtext)
                             .lineLimit(1)
@@ -316,27 +316,14 @@ private struct MoonTimesPanel: View {
 
     var body: some View {
         GlassPanel {
-            VStack(spacing: 18) {
-                HStack {
-                    Text("오늘의 달 시간")
-                        .font(.headline.weight(.semibold))
-                        .foregroundStyle(Color.moonText)
-
-                    Spacer()
-
-                    Text("서울 기준")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(Color.moonSubtext)
-                }
-
-                HStack(spacing: 0) {
-                    TimeMetricView(symbol: "arrow.up", title: "월출", time: day.moonrise)
-                    VerticalDivider()
-                    TimeMetricView(symbol: "moon.haze", title: "남중", time: day.transit)
-                    VerticalDivider()
-                    TimeMetricView(symbol: "arrow.down", title: "월몰", time: day.moonset)
-                }
+            HStack(spacing: 0) {
+                TimeMetricView(symbol: "arrow.up", title: "월출", time: day.moonrise)
+                VerticalDivider()
+                TimeMetricView(symbol: "moon.haze", title: "남중", time: day.transit)
+                VerticalDivider()
+                TimeMetricView(symbol: "arrow.down", title: "월몰", time: day.moonset)
             }
+            .padding(.vertical, 8)
         }
     }
 }
@@ -347,20 +334,22 @@ private struct TimeMetricView: View {
     let time: String
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 14) {
             Image(systemName: symbol)
-                .font(.system(size: 28, weight: .medium))
+                .font(.system(size: 34, weight: .medium))
                 .foregroundStyle(Color.moonSubtext)
 
             Text(title)
-                .font(.title3.weight(.semibold))
+                .font(.system(size: 24, weight: .semibold, design: .rounded))
                 .foregroundStyle(Color.moonSubtext)
+                .lineLimit(1)
+                .minimumScaleFactor(0.82)
 
             Text(time)
-                .font(.system(size: 42, weight: .semibold, design: .rounded))
+                .font(.system(size: 48, weight: .semibold, design: .rounded))
                 .monospacedDigit()
                 .foregroundStyle(Color.moonText)
-                .minimumScaleFactor(0.68)
+                .minimumScaleFactor(0.62)
                 .lineLimit(1)
         }
         .frame(maxWidth: .infinity)
@@ -371,7 +360,7 @@ private struct VerticalDivider: View {
     var body: some View {
         Rectangle()
             .fill(.white.opacity(0.12))
-            .frame(width: 1, height: 128)
+            .frame(width: 1, height: 152)
             .padding(.horizontal, 12)
     }
 }
