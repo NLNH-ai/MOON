@@ -14,7 +14,7 @@ enum MoonLayout {
     static let cardCornerRadius: CGFloat = 30
     static let glassPanelFillOpacity: Double = 0.86
     static let glassPanelShadowOpacity: Double = 0.24
-    static let glassPanelBorderOpacity: Double = 0.10
+    static let glassPanelBorderOpacity: Double = 0.14
     static let headerSideRailWidth: CGFloat = 84
     static let heroImageHorizontalInset: CGFloat = 30
     static let heroImageCornerRadius: CGFloat = 2
