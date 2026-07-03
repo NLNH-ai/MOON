@@ -20,6 +20,8 @@ enum MoonLayout {
     static let heroImageShadowRadius: CGFloat = 18
     static let heroImageShadowYOffset: CGFloat = 6
     static let previewMoonThumbnailSize: CGFloat = 82
+    static let previewMoonThumbnailStrokeOpacity: Double = 0.24
+    static let previewMoonThumbnailGlowOpacity: Double = 0.10
     static let selectedDayBadgeSize: CGFloat = 38
     static let statusDividerHeight: CGFloat = 52
     static let statusDividerHorizontalInset: CGFloat = 2
