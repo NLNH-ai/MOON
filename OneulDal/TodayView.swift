@@ -311,7 +311,7 @@ private struct WeekMoonCell: View {
         if isToday {
             return MoonLayout.selectedDayBadgeSize
         }
-        return 34
+        return MoonLayout.previewMoonCellSize
     }
 
     private var phaseShadowOpacity: Double {
