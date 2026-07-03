@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 enum AppTab: String, CaseIterable, Identifiable {
     case today
@@ -33,6 +34,10 @@ enum AppTab: String, CaseIterable, Identifiable {
 struct AppRootView: View {
     @State private var selectedTab: AppTab = .today
 
+    init() {
+        Self.configureTabBarAppearance()
+    }
+
     var body: some View {
         TabView(selection: $selectedTab) {
             TodayView(selectedTab: $selectedTab)
@@ -55,6 +60,40 @@ struct AppRootView: View {
         }
         .tint(Color.moonGold)
         .preferredColorScheme(.dark)
+    }
+
+    private static func configureTabBarAppearance() {
+        let selectedColor = UIColor(red: 0.905, green: 0.843, blue: 0.604, alpha: 1)
+        let normalColor = UIColor(red: 0.667, green: 0.706, blue: 0.773, alpha: 0.64)
+        let tabBackground = UIColor(red: 0.030, green: 0.034, blue: 0.047, alpha: 0.98)
+
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = tabBackground
+        appearance.shadowColor = UIColor.white.withAlphaComponent(0.08)
+
+        appearance.stackedLayoutAppearance = tabItemAppearance(selectedColor: selectedColor, normalColor: normalColor)
+        appearance.inlineLayoutAppearance = tabItemAppearance(selectedColor: selectedColor, normalColor: normalColor)
+        appearance.compactInlineLayoutAppearance = tabItemAppearance(selectedColor: selectedColor, normalColor: normalColor)
+
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+        UITabBar.appearance().isTranslucent = false
+    }
+
+    private static func tabItemAppearance(selectedColor: UIColor, normalColor: UIColor) -> UITabBarItemAppearance {
+        let itemAppearance = UITabBarItemAppearance()
+        itemAppearance.normal.iconColor = normalColor
+        itemAppearance.normal.titleTextAttributes = [
+            .foregroundColor: normalColor,
+            .font: UIFont.systemFont(ofSize: 12, weight: .semibold)
+        ]
+        itemAppearance.selected.iconColor = selectedColor
+        itemAppearance.selected.titleTextAttributes = [
+            .foregroundColor: selectedColor,
+            .font: UIFont.systemFont(ofSize: 12, weight: .semibold)
+        ]
+        return itemAppearance
     }
 }
 
