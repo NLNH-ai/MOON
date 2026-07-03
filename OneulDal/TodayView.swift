@@ -182,13 +182,13 @@ struct TodayView: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("다음 보름달")
-                            .font(.system(size: 26, weight: .semibold, design: .rounded))
+                            .font(.system(size: MoonLayout.nextMoonTitleTextSize, weight: .semibold, design: .rounded))
                             .foregroundStyle(Color.moonText)
                             .lineLimit(1)
                             .minimumScaleFactor(0.78)
 
                         Text("7월 7일 화요일")
-                            .font(.system(size: 17, weight: .medium, design: .rounded))
+                            .font(.system(size: MoonLayout.nextMoonDateTextSize, weight: .medium, design: .rounded))
                             .foregroundStyle(Color.moonSubtext)
                             .lineLimit(1)
                             .minimumScaleFactor(0.82)
