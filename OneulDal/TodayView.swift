@@ -414,11 +414,11 @@ private struct TimeMetricView: View {
         VStack(spacing: 14) {
             VStack(spacing: 7) {
                 Image(systemName: symbol)
-                    .font(.system(size: 34, weight: .medium))
+                    .font(.system(size: MoonLayout.timeIconSize, weight: .medium))
                     .foregroundStyle(Color.moonSubtext)
 
                 Text(title)
-                    .font(.system(size: 24, weight: .semibold, design: .rounded))
+                    .font(.system(size: MoonLayout.timeLabelTextSize, weight: .semibold, design: .rounded))
                     .foregroundStyle(Color.moonSubtext)
                     .lineLimit(1)
                     .minimumScaleFactor(0.82)
