@@ -243,8 +243,7 @@ struct TodayView: View {
 
                     WeekMoonCell(
                         day: moonDay,
-                        isToday: day == today.day,
-                        isMilestone: moonDay.isMajorPhase
+                        isToday: day == today.day
                     )
                 }
             }
@@ -297,13 +296,12 @@ private struct StatusDivider: View {
 private struct WeekMoonCell: View {
     let day: MoonDay
     let isToday: Bool
-    let isMilestone: Bool
 
     private var moonSize: CGFloat {
         if isToday {
             return MoonLayout.selectedDayBadgeSize
         }
-        return isMilestone ? 40 : 34
+        return 34
     }
 
     private var phaseShadowOpacity: Double {
@@ -314,14 +312,14 @@ private struct WeekMoonCell: View {
         if isToday {
             return Color.moonGold.opacity(0.42)
         }
-        return isMilestone ? Color.moonGold.opacity(0.55) : Color.white.opacity(0.08)
+        return Color.white.opacity(0.08)
     }
 
     private var moonGlowOpacity: Double {
         if isToday {
             return 0.18
         }
-        return isMilestone ? 0.18 : 0.06
+        return 0.06
     }
 
     var body: some View {
@@ -358,17 +356,17 @@ private struct WeekMoonCell: View {
                     Circle()
                         .stroke(moonStrokeColor, lineWidth: 1)
                 )
-                .shadow(color: Color.moonGold.opacity(moonGlowOpacity), radius: isToday || isMilestone ? 8 : 4, x: 0, y: 0)
+                .shadow(color: Color.moonGold.opacity(moonGlowOpacity), radius: isToday ? 8 : 4, x: 0, y: 0)
                 .accessibilityHidden(true)
 
             Text("\(day.illumination)%")
                 .font(.system(
                     size: isToday ? 17 : 16,
-                    weight: isToday || isMilestone ? .bold : .medium,
+                    weight: isToday ? .bold : .medium,
                     design: .rounded
                 ))
                 .foregroundStyle(
-                    isMilestone ? Color.moonGold : (isToday ? Color.moonText.opacity(0.92) : Color.moonSubtext)
+                    isToday ? Color.moonText.opacity(0.92) : Color.moonSubtext
                 )
                 .lineLimit(1)
                 .minimumScaleFactor(0.72)
