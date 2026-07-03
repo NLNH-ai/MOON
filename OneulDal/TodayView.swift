@@ -419,7 +419,7 @@ private struct TimeMetricView: View {
             }
 
             Text(time)
-                .font(.system(size: 48, weight: .semibold, design: .rounded))
+                .font(.system(size: 50, weight: .semibold, design: .serif))
                 .monospacedDigit()
                 .foregroundStyle(Color.moonText)
                 .minimumScaleFactor(0.62)
