@@ -392,7 +392,7 @@ private struct VerticalDivider: View {
         Rectangle()
             .fill(.white.opacity(0.12))
             .frame(width: 1, height: 132)
-            .padding(.horizontal, 8)
+            .padding(.horizontal, MoonLayout.timeDividerHorizontalInset)
     }
 }
 

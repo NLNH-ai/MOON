@@ -16,6 +16,7 @@ enum MoonLayout {
     static let heroImageHorizontalInset: CGFloat = 30
     static let previewMoonThumbnailSize: CGFloat = 82
     static let selectedDayBadgeSize: CGFloat = 38
+    static let timeDividerHorizontalInset: CGFloat = 5
 }
 
 struct MoonBackground: View {
