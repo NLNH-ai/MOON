@@ -209,7 +209,7 @@ struct TodayView: View {
 
                         Image(systemName: "chevron.right")
                             .font(.system(size: 30, weight: .semibold))
-                            .foregroundStyle(Color.moonSubtext.opacity(0.9))
+                            .foregroundStyle(Color.moonSubtext.opacity(MoonLayout.nextMoonChevronOpacity))
                             .frame(width: 30, height: 34)
                     }
                 }
