@@ -160,7 +160,7 @@ struct TodayView: View {
                     Image("MoonWaxingGibbous")
                         .resizable()
                         .scaledToFill()
-                        .frame(width: 74, height: 74)
+                        .frame(width: MoonLayout.previewMoonThumbnailSize, height: MoonLayout.previewMoonThumbnailSize)
                         .clipShape(Circle())
                         .overlay(
                             Circle()

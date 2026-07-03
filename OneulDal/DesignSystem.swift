@@ -13,6 +13,7 @@ extension Color {
 enum MoonLayout {
     static let cardCornerRadius: CGFloat = 30
     static let heroImageHorizontalInset: CGFloat = 30
+    static let previewMoonThumbnailSize: CGFloat = 82
 }
 
 struct MoonBackground: View {
