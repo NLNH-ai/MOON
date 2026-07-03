@@ -60,13 +60,13 @@ struct TodayView: View {
             Button {
                 activeSheet = .location
             } label: {
-                HStack(spacing: 8) {
+                HStack(spacing: 6) {
                     Image(systemName: "location.north.circle.fill")
-                        .font(.system(size: 26, weight: .semibold))
+                        .font(.system(size: 24, weight: .semibold))
                     Text(selectedCity)
-                        .font(.system(size: 26, weight: .semibold, design: .rounded))
+                        .font(.system(size: 24, weight: .semibold, design: .rounded))
                         .lineLimit(1)
-                        .minimumScaleFactor(0.74)
+                        .minimumScaleFactor(0.82)
                 }
                 .foregroundStyle(Color.moonText)
                 .frame(width: MoonLayout.headerSideRailWidth, height: 52, alignment: .leading)
