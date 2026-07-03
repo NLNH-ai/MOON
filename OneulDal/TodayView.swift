@@ -61,7 +61,7 @@ struct TodayView: View {
                 activeSheet = .location
             } label: {
                 HStack(spacing: 6) {
-                    Image(systemName: "location.north.circle.fill")
+                    Image(systemName: "location.north.circle")
                         .font(.system(size: 24, weight: .semibold))
                     Text(selectedCity)
                         .font(.system(size: 24, weight: .semibold, design: .rounded))
