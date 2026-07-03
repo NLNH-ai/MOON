@@ -58,48 +58,40 @@ struct TodayView: View {
     private var topBar: some View {
         ZStack {
             Text("오늘달")
-                .font(.system(size: 34, weight: .heavy, design: .rounded))
+                .font(.system(size: 44, weight: .heavy, design: .rounded))
                 .foregroundStyle(Color.moonText)
                 .lineLimit(1)
-                .minimumScaleFactor(0.82)
-                .padding(.horizontal, 92)
+                .minimumScaleFactor(0.74)
+                .padding(.horizontal, 104)
 
             HStack {
                 Button {
                     activeSheet = .location
                 } label: {
-                    HStack(spacing: 7) {
-                        Image(systemName: "location.fill")
-                            .font(.caption.weight(.bold))
+                    HStack(spacing: 8) {
+                        Image(systemName: "location.north.circle.fill")
+                            .font(.title3.weight(.semibold))
                         Text(selectedCity)
-                            .font(.headline.weight(.semibold))
+                            .font(.system(size: 24, weight: .semibold, design: .rounded))
                             .lineLimit(1)
+                            .minimumScaleFactor(0.76)
                     }
                     .foregroundStyle(Color.moonText)
-                    .padding(.horizontal, 12)
-                    .frame(height: 38)
-                    .frame(maxWidth: 92)
-                    .background(Color.moonSurface.opacity(0.62), in: Capsule())
-                    .overlay(
-                        Capsule()
-                            .stroke(.white.opacity(0.09), lineWidth: 1)
-                    )
+                    .frame(maxWidth: 104, minHeight: 44, alignment: .leading)
+                    .contentShape(Rectangle())
                 }
+                .accessibilityLabel("지역 \(selectedCity)")
 
                 Spacer()
 
                 Button {
                     activeSheet = .settings
                 } label: {
-                    Image(systemName: "gearshape.fill")
-                        .font(.title3.weight(.semibold))
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 30, weight: .semibold))
                         .foregroundStyle(Color.moonText)
-                        .frame(width: 38, height: 38)
-                        .background(Color.moonSurface.opacity(0.62), in: Circle())
-                        .overlay(
-                            Circle()
-                                .stroke(.white.opacity(0.09), lineWidth: 1)
-                        )
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
                 .accessibilityLabel("설정")
             }
@@ -120,13 +112,13 @@ struct TodayView: View {
                     .resizable()
                     .scaledToFill()
                     .frame(maxWidth: .infinity)
-                    .frame(height: 292)
-                    .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+                    .aspectRatio(1, contentMode: .fit)
+                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 30, style: .continuous)
-                            .stroke(.white.opacity(0.08), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .stroke(.white.opacity(0.05), lineWidth: 1)
                     )
-                    .shadow(color: Color.moonGold.opacity(0.2), radius: 30, x: 0, y: 12)
+                    .shadow(color: Color.moonGold.opacity(0.14), radius: 24, x: 0, y: 10)
                     .accessibilityLabel("상현망간의 달 이미지")
             }
 
