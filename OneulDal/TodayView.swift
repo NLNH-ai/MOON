@@ -306,6 +306,20 @@ private struct WeekMoonCell: View {
         max(0.0, min(0.52, Double(100 - day.illumination) / 82.0))
     }
 
+    private var moonStrokeColor: Color {
+        if isToday {
+            return Color.moonGold.opacity(0.42)
+        }
+        return isMilestone ? Color.moonGold.opacity(0.55) : Color.white.opacity(0.08)
+    }
+
+    private var moonGlowOpacity: Double {
+        if isToday {
+            return 0.18
+        }
+        return isMilestone ? 0.18 : 0.06
+    }
+
     var body: some View {
         VStack(spacing: 8) {
             Text("\(day.day)")
@@ -338,9 +352,9 @@ private struct WeekMoonCell: View {
                 }
                 .overlay(
                     Circle()
-                        .stroke(isMilestone ? Color.moonGold.opacity(0.55) : Color.white.opacity(0.08), lineWidth: 1)
+                        .stroke(moonStrokeColor, lineWidth: 1)
                 )
-                .shadow(color: Color.moonGold.opacity(isMilestone ? 0.18 : 0.06), radius: isMilestone ? 8 : 4, x: 0, y: 0)
+                .shadow(color: Color.moonGold.opacity(moonGlowOpacity), radius: isToday || isMilestone ? 8 : 4, x: 0, y: 0)
                 .accessibilityHidden(true)
 
             Text(isMilestone ? (day.majorPhaseLabel ?? "\(day.illumination)%") : "\(day.illumination)%")
