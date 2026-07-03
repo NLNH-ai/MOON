@@ -60,6 +60,9 @@ struct TodayView: View {
             Text("오늘달")
                 .font(.system(size: 34, weight: .heavy, design: .rounded))
                 .foregroundStyle(Color.moonText)
+                .lineLimit(1)
+                .minimumScaleFactor(0.82)
+                .padding(.horizontal, 92)
 
             HStack {
                 Button {
@@ -70,10 +73,12 @@ struct TodayView: View {
                             .font(.caption.weight(.bold))
                         Text(selectedCity)
                             .font(.headline.weight(.semibold))
+                            .lineLimit(1)
                     }
                     .foregroundStyle(Color.moonText)
                     .padding(.horizontal, 12)
                     .frame(height: 38)
+                    .frame(maxWidth: 92)
                     .background(Color.moonSurface.opacity(0.62), in: Capsule())
                     .overlay(
                         Capsule()
@@ -171,6 +176,10 @@ struct TodayView: View {
                         .scaledToFill()
                         .frame(width: 62, height: 62)
                         .clipShape(Circle())
+                        .overlay(
+                            Circle()
+                                .stroke(Color.moonGold.opacity(0.28), lineWidth: 1)
+                        )
 
                     VStack(alignment: .leading, spacing: 6) {
                         Text("다음 보름달")
@@ -184,13 +193,18 @@ struct TodayView: View {
 
                     Spacer()
 
-                    Text("D-5")
-                        .font(.title.weight(.bold))
-                        .foregroundStyle(Color.moonGold)
+                    VStack(alignment: .trailing, spacing: 8) {
+                        Text("D-5")
+                            .font(.title.weight(.heavy))
+                            .monospacedDigit()
+                            .foregroundStyle(Color.moonGold)
 
-                    Image(systemName: "chevron.right")
-                        .font(.title3.weight(.semibold))
-                        .foregroundStyle(Color.moonSubtext)
+                        Image(systemName: "chevron.right")
+                            .font(.headline.weight(.bold))
+                            .foregroundStyle(Color.moonBackground)
+                            .frame(width: 30, height: 30)
+                            .background(Color.moonGold, in: Circle())
+                    }
                 }
             }
         }
