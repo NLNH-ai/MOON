@@ -277,12 +277,18 @@ private struct StatusMetric: View {
                 .foregroundStyle(tint)
                 .frame(width: 30, height: 30)
 
-            Text("\(label) \(value)")
-                .font(.system(size: 21, weight: .semibold, design: .rounded))
-                .foregroundStyle(Color.moonText)
-                .lineLimit(1)
-                .minimumScaleFactor(0.66)
-                .layoutPriority(1)
+            HStack(spacing: 4) {
+                Text(label)
+                    .font(.system(size: 21, weight: .semibold, design: .rounded))
+
+                Text(value)
+                    .font(.system(size: 21, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+            }
+            .foregroundStyle(Color.moonText)
+            .lineLimit(1)
+            .minimumScaleFactor(0.66)
+            .layoutPriority(1)
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .ignore)
