@@ -159,10 +159,16 @@ struct TodayView: View {
                         .scaledToFill()
                         .frame(width: MoonLayout.previewMoonThumbnailSize, height: MoonLayout.previewMoonThumbnailSize)
                         .clipShape(Circle())
+                        .background(
+                            Circle()
+                                .fill(Color.black.opacity(0.30))
+                                .shadow(color: .black.opacity(0.34), radius: 10, x: 0, y: 6)
+                        )
                         .overlay(
                             Circle()
                                 .stroke(Color.moonGold.opacity(0.34), lineWidth: 1)
                         )
+                        .shadow(color: Color.moonGold.opacity(0.16), radius: 12, x: 0, y: 0)
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("다음 보름달")
