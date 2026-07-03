@@ -201,6 +201,7 @@ struct TodayView: View {
                             .font(.system(size: 21, weight: .semibold))
                             .foregroundStyle(Color.moonSubtext)
                             .frame(width: 32, height: 32)
+                            .background(Color.white.opacity(0.055), in: Circle())
                     }
                 }
                 .padding(.vertical, 4)
