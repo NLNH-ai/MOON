@@ -110,12 +110,17 @@ struct TodayView: View {
                     .scaledToFill()
                     .frame(maxWidth: .infinity)
                     .aspectRatio(1, contentMode: .fit)
-                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: MoonLayout.heroImageCornerRadius, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 6, style: .continuous)
-                            .stroke(.white.opacity(0.05), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: MoonLayout.heroImageCornerRadius, style: .continuous)
+                            .stroke(.white.opacity(MoonLayout.heroImageBorderOpacity), lineWidth: 1)
                     )
-                    .shadow(color: Color.moonGold.opacity(0.14), radius: 24, x: 0, y: 10)
+                    .shadow(
+                        color: Color.moonGold.opacity(MoonLayout.heroImageShadowOpacity),
+                        radius: MoonLayout.heroImageShadowRadius,
+                        x: 0,
+                        y: MoonLayout.heroImageShadowYOffset
+                    )
                     .padding(.horizontal, MoonLayout.heroImageHorizontalInset)
                     .accessibilityLabel("상현망간의 달 이미지")
             }
