@@ -240,7 +240,7 @@ struct TodayView: View {
                         .font(.system(size: 20, weight: .semibold, design: .rounded))
                         .lineLimit(1)
                         .minimumScaleFactor(0.68)
-                        .foregroundStyle(Color.moonGold)
+                        .foregroundStyle(Color.moonGold.opacity(MoonLayout.monthPreviewActionOpacity))
                         .padding(.vertical, 6)
                         .contentShape(Rectangle())
                 }
