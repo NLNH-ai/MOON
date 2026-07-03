@@ -58,11 +58,11 @@ struct TodayView: View {
     private var topBar: some View {
         ZStack {
             Text("오늘달")
-                .font(.system(size: 44, weight: .heavy, design: .rounded))
+                .font(.system(size: 56, weight: .heavy, design: .rounded))
                 .foregroundStyle(Color.moonText)
                 .lineLimit(1)
-                .minimumScaleFactor(0.74)
-                .padding(.horizontal, 104)
+                .minimumScaleFactor(0.68)
+                .padding(.horizontal, 112)
 
             HStack {
                 Button {
@@ -70,14 +70,14 @@ struct TodayView: View {
                 } label: {
                     HStack(spacing: 8) {
                         Image(systemName: "location.north.circle.fill")
-                            .font(.title3.weight(.semibold))
+                            .font(.system(size: 26, weight: .semibold))
                         Text(selectedCity)
-                            .font(.system(size: 24, weight: .semibold, design: .rounded))
+                            .font(.system(size: 26, weight: .semibold, design: .rounded))
                             .lineLimit(1)
                             .minimumScaleFactor(0.76)
                     }
                     .foregroundStyle(Color.moonText)
-                    .frame(maxWidth: 104, minHeight: 44, alignment: .leading)
+                    .frame(maxWidth: 112, minHeight: 52, alignment: .leading)
                     .contentShape(Rectangle())
                 }
                 .accessibilityLabel("지역 \(selectedCity)")
@@ -88,9 +88,9 @@ struct TodayView: View {
                     activeSheet = .settings
                 } label: {
                     Image(systemName: "gearshape")
-                        .font(.system(size: 30, weight: .semibold))
+                        .font(.system(size: 34, weight: .semibold))
                         .foregroundStyle(Color.moonText)
-                        .frame(width: 44, height: 44)
+                        .frame(width: 52, height: 52)
                         .contentShape(Rectangle())
                 }
                 .accessibilityLabel("설정")
@@ -102,9 +102,9 @@ struct TodayView: View {
         VStack(spacing: 16) {
             VStack(spacing: 12) {
                 Text("2026. 7. 2 오늘")
-                    .font(.system(size: 24, weight: .semibold, design: .rounded))
+                    .font(.system(size: 32, weight: .semibold, design: .rounded))
                     .lineLimit(1)
-                    .minimumScaleFactor(0.82)
+                    .minimumScaleFactor(0.78)
                     .foregroundStyle(Color.moonSubtext)
                     .frame(maxWidth: .infinity)
 
@@ -124,14 +124,16 @@ struct TodayView: View {
 
             VStack(spacing: 8) {
                 Text(today.phaseNameKo)
-                    .font(.system(size: 36, weight: .heavy, design: .rounded))
+                    .font(.system(size: 52, weight: .heavy, design: .rounded))
                     .foregroundStyle(Color.moonGold)
-                    .minimumScaleFactor(0.8)
+                    .minimumScaleFactor(0.68)
                     .lineLimit(1)
 
                 Text(today.phaseNameEn)
-                    .font(.callout.weight(.semibold))
+                    .font(.system(size: 24, weight: .semibold, design: .rounded))
                     .foregroundStyle(Color.moonSubtext)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.82)
             }
         }
     }
