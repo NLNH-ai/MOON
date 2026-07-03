@@ -269,7 +269,7 @@ private struct StatusMetric: View {
     var tint: Color = Color.moonText
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: MoonLayout.statusMetricContentSpacing) {
             Image(systemName: symbol)
                 .font(.system(size: MoonLayout.statusMetricIconSize, weight: .regular))
                 .foregroundStyle(tint)
