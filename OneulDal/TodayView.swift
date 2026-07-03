@@ -305,7 +305,10 @@ private struct WeekMoonCell: View {
     let isMilestone: Bool
 
     private var moonSize: CGFloat {
-        isMilestone ? 40 : 34
+        if isToday {
+            return MoonLayout.selectedDayBadgeSize
+        }
+        return isMilestone ? 40 : 34
     }
 
     private var phaseShadowOpacity: Double {
