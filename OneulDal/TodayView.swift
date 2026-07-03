@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 
 private enum TodaySheet: Identifiable {
@@ -27,14 +28,8 @@ struct TodayView: View {
                 MoonBackground()
 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 22) {
+                    VStack(spacing: 20) {
                         topBar
-
-                        Text("2026. 7. 2 오늘")
-                            .font(.title3.weight(.medium))
-                            .foregroundStyle(Color.moonSubtext)
-                            .padding(.top, 10)
-
                         moonHero
                         statusRow
                         MoonTimesPanel(day: today)
@@ -61,68 +56,108 @@ struct TodayView: View {
     }
 
     private var topBar: some View {
-        HStack {
-            Button {
-                activeSheet = .location
-            } label: {
-                Label(selectedCity, systemImage: "location.circle")
-                    .font(.headline)
-                    .foregroundStyle(Color.moonText)
-            }
-
-            Spacer()
-
+        ZStack {
             Text("오늘달")
-                .font(.largeTitle.weight(.bold))
+                .font(.system(size: 34, weight: .heavy, design: .rounded))
                 .foregroundStyle(Color.moonText)
 
-            Spacer()
-
-            Button {
-                activeSheet = .settings
-            } label: {
-                Image(systemName: "gearshape")
-                    .font(.title2.weight(.semibold))
+            HStack {
+                Button {
+                    activeSheet = .location
+                } label: {
+                    HStack(spacing: 7) {
+                        Image(systemName: "location.fill")
+                            .font(.caption.weight(.bold))
+                        Text(selectedCity)
+                            .font(.headline.weight(.semibold))
+                    }
                     .foregroundStyle(Color.moonText)
-                    .frame(width: 44, height: 44)
+                    .padding(.horizontal, 12)
+                    .frame(height: 38)
+                    .background(Color.moonSurface.opacity(0.62), in: Capsule())
+                    .overlay(
+                        Capsule()
+                            .stroke(.white.opacity(0.09), lineWidth: 1)
+                    )
+                }
+
+                Spacer()
+
+                Button {
+                    activeSheet = .settings
+                } label: {
+                    Image(systemName: "gearshape.fill")
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(Color.moonText)
+                        .frame(width: 38, height: 38)
+                        .background(Color.moonSurface.opacity(0.62), in: Circle())
+                        .overlay(
+                            Circle()
+                                .stroke(.white.opacity(0.09), lineWidth: 1)
+                        )
+                }
+                .accessibilityLabel("설정")
             }
-            .accessibilityLabel("설정")
         }
     }
 
     private var moonHero: some View {
-        VStack(spacing: 18) {
-            Image("MoonWaxingGibbous")
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: 300)
-                .shadow(color: Color.moonGold.opacity(0.28), radius: 26, x: 0, y: 0)
-                .accessibilityLabel("상현망간의 달 이미지")
+        VStack(spacing: 16) {
+            VStack(spacing: 12) {
+                HStack(spacing: 8) {
+                    Text("2026. 7. 2")
+                    Text("오늘")
+                        .foregroundStyle(Color.moonGold)
+                    Spacer()
+                    Text(today.waxingText)
+                }
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(Color.moonSubtext)
+                .textCase(.uppercase)
+
+                Image("MoonWaxingGibbous")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 292)
+                    .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 30, style: .continuous)
+                            .stroke(.white.opacity(0.08), lineWidth: 1)
+                    )
+                    .shadow(color: Color.moonGold.opacity(0.2), radius: 30, x: 0, y: 12)
+                    .accessibilityLabel("상현망간의 달 이미지")
+            }
 
             VStack(spacing: 8) {
                 Text(today.phaseNameKo)
-                    .font(.system(size: 34, weight: .bold, design: .serif))
+                    .font(.system(size: 36, weight: .heavy, design: .rounded))
                     .foregroundStyle(Color.moonGold)
                     .minimumScaleFactor(0.8)
                     .lineLimit(1)
 
                 Text(today.phaseNameEn)
-                    .font(.callout.weight(.medium))
+                    .font(.callout.weight(.semibold))
                     .foregroundStyle(Color.moonSubtext)
             }
         }
     }
 
     private var statusRow: some View {
-        HStack(spacing: 12) {
-            StatusMetric(symbol: "sun.max", text: today.brightnessText)
-            Divider().background(.white.opacity(0.24))
-            StatusMetric(symbol: "moon", text: today.moonAgeText)
-            Divider().background(.white.opacity(0.24))
-            StatusMetric(symbol: "circle.fill", text: today.visibilityMessage, tint: Color.moonGold)
+        HStack(spacing: 8) {
+            StatusMetric(symbol: "sun.max", label: "밝기", value: "\(today.illumination)%")
+            StatusMetric(symbol: "moon", label: "달령", value: String(format: "%.1f일", today.moonAge))
+            StatusMetric(symbol: "circle.fill", label: "상태", value: "떠 있음", tint: Color.moonGold)
         }
-        .frame(height: 42)
-        .foregroundStyle(Color.moonText)
+        .padding(8)
+        .background(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(.black.opacity(0.18))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .stroke(.white.opacity(0.08), lineWidth: 1)
+                )
+        )
     }
 
     private var nextFullMoonCard: some View {
@@ -211,19 +246,31 @@ struct TodayView: View {
 
 private struct StatusMetric: View {
     let symbol: String
-    let text: String
+    let label: String
+    let value: String
     var tint: Color = Color.moonText
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 7) {
             Image(systemName: symbol)
                 .foregroundStyle(tint)
-            Text(text)
-                .font(.subheadline.weight(.medium))
-                .lineLimit(1)
-                .minimumScaleFactor(0.75)
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text(label)
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(Color.moonSubtext)
+
+                Text(value)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Color.moonText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.76)
+            }
         }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 9)
         .frame(maxWidth: .infinity)
+        .background(Color.moonSurface.opacity(0.58), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 }
 
@@ -232,12 +279,26 @@ private struct MoonTimesPanel: View {
 
     var body: some View {
         GlassPanel {
-            HStack(spacing: 0) {
-                TimeMetricView(symbol: "arrow.up", title: "월출", time: day.moonrise)
-                VerticalDivider()
-                TimeMetricView(symbol: "moon.haze", title: "남중", time: day.transit)
-                VerticalDivider()
-                TimeMetricView(symbol: "arrow.down", title: "월몰", time: day.moonset)
+            VStack(spacing: 16) {
+                HStack {
+                    Text("오늘의 달 시간")
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(Color.moonText)
+
+                    Spacer()
+
+                    Text("서울 기준")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Color.moonSubtext)
+                }
+
+                HStack(spacing: 0) {
+                    TimeMetricView(symbol: "arrow.up", title: "월출", time: day.moonrise)
+                    VerticalDivider()
+                    TimeMetricView(symbol: "moon.haze", title: "남중", time: day.transit)
+                    VerticalDivider()
+                    TimeMetricView(symbol: "arrow.down", title: "월몰", time: day.moonset)
+                }
             }
         }
     }
@@ -259,7 +320,7 @@ private struct TimeMetricView: View {
                 .foregroundStyle(Color.moonSubtext)
 
             Text(time)
-                .font(.system(size: 32, weight: .medium, design: .serif))
+                .font(.system(size: 30, weight: .semibold, design: .rounded))
                 .monospacedDigit()
                 .foregroundStyle(Color.moonText)
                 .minimumScaleFactor(0.8)
