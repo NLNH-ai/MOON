@@ -87,12 +87,12 @@ struct AppRootView: View {
         itemAppearance.normal.iconColor = normalColor
         itemAppearance.normal.titleTextAttributes = [
             .foregroundColor: normalColor,
-            .font: UIFont.systemFont(ofSize: 12, weight: .semibold)
+            .font: UIFont.systemFont(ofSize: 13, weight: .semibold)
         ]
         itemAppearance.selected.iconColor = selectedColor
         itemAppearance.selected.titleTextAttributes = [
             .foregroundColor: selectedColor,
-            .font: UIFont.systemFont(ofSize: 12, weight: .semibold)
+            .font: UIFont.systemFont(ofSize: 13, weight: .semibold)
         ]
         return itemAppearance
     }
