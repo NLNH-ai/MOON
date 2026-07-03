@@ -177,8 +177,10 @@ struct TodayView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.82)
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .layoutPriority(1)
 
-                    Spacer(minLength: 12)
+                    Spacer(minLength: 8)
 
                     HStack(spacing: 10) {
                         Text("D-5")
