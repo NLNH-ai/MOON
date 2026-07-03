@@ -38,7 +38,7 @@ struct TodayView: View {
                     }
                     .padding(.horizontal, 22)
                     .padding(.top, 18)
-                    .padding(.bottom, 56)
+                    .padding(.bottom, 104)
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
