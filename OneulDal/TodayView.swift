@@ -367,16 +367,18 @@ private struct TimeMetricView: View {
     let time: String
 
     var body: some View {
-        VStack(spacing: 10) {
-            Image(systemName: symbol)
-                .font(.system(size: 34, weight: .medium))
-                .foregroundStyle(Color.moonSubtext)
+        VStack(spacing: 14) {
+            VStack(spacing: 7) {
+                Image(systemName: symbol)
+                    .font(.system(size: 34, weight: .medium))
+                    .foregroundStyle(Color.moonSubtext)
 
-            Text(title)
-                .font(.system(size: 24, weight: .semibold, design: .rounded))
-                .foregroundStyle(Color.moonSubtext)
-                .lineLimit(1)
-                .minimumScaleFactor(0.82)
+                Text(title)
+                    .font(.system(size: 24, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color.moonSubtext)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.82)
+            }
 
             Text(time)
                 .font(.system(size: 48, weight: .semibold, design: .rounded))
