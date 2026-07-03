@@ -358,8 +358,14 @@ private struct WeekMoonCell: View {
                 .accessibilityHidden(true)
 
             Text(isMilestone ? (day.majorPhaseLabel ?? "\(day.illumination)%") : "\(day.illumination)%")
-                .font(.system(size: 17, weight: isMilestone ? .bold : .medium, design: .rounded))
-                .foregroundStyle(isMilestone ? Color.moonGold : Color.moonSubtext)
+                .font(.system(
+                    size: isToday ? 17 : 16,
+                    weight: isToday || isMilestone ? .bold : .medium,
+                    design: .rounded
+                ))
+                .foregroundStyle(
+                    isMilestone ? Color.moonGold : (isToday ? Color.moonText.opacity(0.92) : Color.moonSubtext)
+                )
                 .lineLimit(1)
                 .minimumScaleFactor(0.72)
         }
