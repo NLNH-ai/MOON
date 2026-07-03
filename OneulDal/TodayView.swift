@@ -119,6 +119,7 @@ struct TodayView: View {
                             .stroke(.white.opacity(0.05), lineWidth: 1)
                     )
                     .shadow(color: Color.moonGold.opacity(0.14), radius: 24, x: 0, y: 10)
+                    .padding(.horizontal, MoonLayout.heroImageHorizontalInset)
                     .accessibilityLabel("상현망간의 달 이미지")
             }
 
