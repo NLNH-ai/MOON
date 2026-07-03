@@ -200,8 +200,12 @@ struct TodayView: View {
                         Image(systemName: "chevron.right")
                             .font(.system(size: 21, weight: .semibold))
                             .foregroundStyle(Color.moonSubtext)
-                            .frame(width: 32, height: 32)
-                            .background(Color.white.opacity(0.055), in: Circle())
+                            .frame(width: 34, height: 34)
+                            .background(Color.white.opacity(0.06), in: Circle())
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                            )
                     }
                 }
                 .padding(.vertical, 4)
