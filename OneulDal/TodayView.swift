@@ -335,7 +335,7 @@ private struct WeekMoonCell: View {
     var body: some View {
         VStack(spacing: 8) {
             Text("\(day.day)")
-                .font(.system(size: isToday ? 20 : 18, weight: .bold, design: .rounded))
+                .font(.system(size: isToday ? 20 : 18, weight: isToday ? .bold : .semibold, design: .rounded))
                 .foregroundStyle(isToday ? Color.moonBackground : Color.moonSubtext)
                 .frame(
                     width: isToday ? MoonLayout.selectedDayBadgeSize : 32,
