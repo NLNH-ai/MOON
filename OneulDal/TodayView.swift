@@ -254,17 +254,18 @@ private struct StatusMetric: View {
     var tint: Color = Color.moonText
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 6) {
             Image(systemName: symbol)
-                .font(.system(size: 30, weight: .regular))
+                .font(.system(size: 28, weight: .regular))
                 .foregroundStyle(tint)
-                .frame(width: 32, height: 32)
+                .frame(width: 30, height: 30)
 
             Text("\(label) \(value)")
-                .font(.system(size: 22, weight: .semibold, design: .rounded))
+                .font(.system(size: 21, weight: .semibold, design: .rounded))
                 .foregroundStyle(Color.moonText)
                 .lineLimit(1)
-                .minimumScaleFactor(0.58)
+                .minimumScaleFactor(0.66)
+                .layoutPriority(1)
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .ignore)
@@ -277,7 +278,7 @@ private struct StatusDivider: View {
         Rectangle()
             .fill(.white.opacity(0.16))
             .frame(width: 1, height: 62)
-            .padding(.horizontal, 4)
+            .padding(.horizontal, 3)
     }
 }
 
