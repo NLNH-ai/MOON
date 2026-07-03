@@ -271,9 +271,9 @@ private struct StatusMetric: View {
     var body: some View {
         HStack(spacing: 6) {
             Image(systemName: symbol)
-                .font(.system(size: 28, weight: .regular))
+                .font(.system(size: MoonLayout.statusMetricIconSize, weight: .regular))
                 .foregroundStyle(tint)
-                .frame(width: 30, height: 30)
+                .frame(width: MoonLayout.statusMetricIconFrameSize, height: MoonLayout.statusMetricIconFrameSize)
 
             HStack(spacing: 4) {
                 Text(label)
