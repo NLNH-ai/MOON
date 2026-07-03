@@ -85,7 +85,7 @@ struct TodayView: View {
                 activeSheet = .settings
             } label: {
                 Image(systemName: "gearshape")
-                    .font(.system(size: 34, weight: .semibold))
+                    .font(.system(size: MoonLayout.headerSettingsIconSize, weight: .semibold))
                     .foregroundStyle(Color.moonText)
                     .frame(width: 52, height: 52)
                     .frame(width: MoonLayout.headerSideRailWidth, alignment: .trailing)
