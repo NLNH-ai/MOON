@@ -249,7 +249,7 @@ struct TodayView: View {
                 }
             }
         }
-        .padding(.top, 2)
+        .padding(.top, 10)
     }
 }
 
