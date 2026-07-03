@@ -127,13 +127,13 @@ struct TodayView: View {
 
             VStack(spacing: 8) {
                 Text(today.phaseNameKo)
-                    .font(.system(size: 52, weight: .heavy, design: .rounded))
+                    .font(.system(size: MoonLayout.heroPhaseTitleTextSize, weight: .heavy, design: .rounded))
                     .foregroundStyle(Color.moonGold)
                     .minimumScaleFactor(0.68)
                     .lineLimit(1)
 
                 Text(today.phaseNameEn)
-                    .font(.system(size: 24, weight: .semibold, design: .rounded))
+                    .font(.system(size: MoonLayout.heroPhaseSubtitleTextSize, weight: .semibold, design: .rounded))
                     .foregroundStyle(Color.moonSubtext)
                     .lineLimit(1)
                     .minimumScaleFactor(0.82)

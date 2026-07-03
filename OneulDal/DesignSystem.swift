@@ -26,6 +26,8 @@ enum MoonLayout {
     static let heroImageShadowRadius: CGFloat = 18
     static let heroImageShadowYOffset: CGFloat = 6
     static let heroDateTextSize: CGFloat = 30
+    static let heroPhaseTitleTextSize: CGFloat = 50
+    static let heroPhaseSubtitleTextSize: CGFloat = 23
     static let nextMoonTitleTextSize: CGFloat = 30
     static let nextMoonDateTextSize: CGFloat = 20
     static let nextMoonCountdownTextSize: CGFloat = 34
