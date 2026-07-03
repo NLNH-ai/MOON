@@ -26,6 +26,7 @@ enum MoonLayout {
     static let monthPreviewActionOpacity: Double = 0.90
     static let previewMoonPercentOpacity: Double = 0.90
     static let selectedDayBadgeSize: CGFloat = 38
+    static let statusMetricTextSize: CGFloat = 22
     static let statusDividerHeight: CGFloat = 52
     static let statusDividerHorizontalInset: CGFloat = 2
     static let statusDividerOpacity: Double = 0.12

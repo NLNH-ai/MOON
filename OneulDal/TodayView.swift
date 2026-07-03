@@ -277,10 +277,10 @@ private struct StatusMetric: View {
 
             HStack(spacing: 4) {
                 Text(label)
-                    .font(.system(size: 21, weight: .semibold, design: .rounded))
+                    .font(.system(size: MoonLayout.statusMetricTextSize, weight: .semibold, design: .rounded))
 
                 Text(value)
-                    .font(.system(size: 21, weight: .bold, design: .rounded))
+                    .font(.system(size: MoonLayout.statusMetricTextSize, weight: .bold, design: .rounded))
                     .monospacedDigit()
             }
             .foregroundStyle(Color.moonText)
