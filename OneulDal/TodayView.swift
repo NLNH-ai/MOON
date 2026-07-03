@@ -56,45 +56,42 @@ struct TodayView: View {
     }
 
     private var topBar: some View {
-        ZStack {
+        HStack(alignment: .center, spacing: 8) {
+            Button {
+                activeSheet = .location
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "location.north.circle.fill")
+                        .font(.system(size: 26, weight: .semibold))
+                    Text(selectedCity)
+                        .font(.system(size: 26, weight: .semibold, design: .rounded))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.74)
+                }
+                .foregroundStyle(Color.moonText)
+                .frame(width: 88, height: 52, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .accessibilityLabel("지역 \(selectedCity)")
+
             Text("오늘달")
                 .font(.system(size: 56, weight: .heavy, design: .rounded))
                 .foregroundStyle(Color.moonText)
                 .lineLimit(1)
                 .minimumScaleFactor(0.68)
-                .padding(.horizontal, 112)
+                .frame(maxWidth: .infinity)
 
-            HStack {
-                Button {
-                    activeSheet = .location
-                } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "location.north.circle.fill")
-                            .font(.system(size: 26, weight: .semibold))
-                        Text(selectedCity)
-                            .font(.system(size: 26, weight: .semibold, design: .rounded))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.76)
-                    }
+            Button {
+                activeSheet = .settings
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 34, weight: .semibold))
                     .foregroundStyle(Color.moonText)
-                    .frame(maxWidth: 112, minHeight: 52, alignment: .leading)
+                    .frame(width: 52, height: 52)
+                    .frame(width: 88, alignment: .trailing)
                     .contentShape(Rectangle())
-                }
-                .accessibilityLabel("지역 \(selectedCity)")
-
-                Spacer()
-
-                Button {
-                    activeSheet = .settings
-                } label: {
-                    Image(systemName: "gearshape")
-                        .font(.system(size: 34, weight: .semibold))
-                        .foregroundStyle(Color.moonText)
-                        .frame(width: 52, height: 52)
-                        .contentShape(Rectangle())
-                }
-                .accessibilityLabel("설정")
             }
+            .accessibilityLabel("설정")
         }
     }
 
