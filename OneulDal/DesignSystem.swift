@@ -10,6 +10,10 @@ extension Color {
     static let moonSubtext = Color(red: 0.667, green: 0.706, blue: 0.773)
 }
 
+enum MoonLayout {
+    static let cardCornerRadius: CGFloat = 30
+}
+
 struct MoonBackground: View {
     var body: some View {
         ZStack {
@@ -55,10 +59,11 @@ struct GlassPanel<Content: View>: View {
         content
             .padding(18)
             .background(
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                RoundedRectangle(cornerRadius: MoonLayout.cardCornerRadius, style: .continuous)
                     .fill(Color.moonSurface.opacity(0.82))
+                    .shadow(color: .black.opacity(0.24), radius: 18, x: 0, y: 10)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        RoundedRectangle(cornerRadius: MoonLayout.cardCornerRadius, style: .continuous)
                             .stroke(.white.opacity(0.08), lineWidth: 1)
                     )
             )

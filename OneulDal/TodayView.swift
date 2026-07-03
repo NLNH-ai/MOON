@@ -197,7 +197,7 @@ struct TodayView: View {
                     }
                 }
                 .padding(.vertical, 4)
-                .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .contentShape(RoundedRectangle(cornerRadius: MoonLayout.cardCornerRadius, style: .continuous))
             }
         }
         .buttonStyle(.plain)
