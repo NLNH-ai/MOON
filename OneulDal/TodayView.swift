@@ -146,7 +146,7 @@ struct TodayView: View {
             StatusDivider()
             StatusMetric(symbol: "circle.fill", label: "지금", value: "떠 있어요", tint: Color.moonGold)
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 12)
         .accessibilityElement(children: .combine)
     }
 
@@ -252,16 +252,17 @@ private struct StatusMetric: View {
     var tint: Color = Color.moonText
 
     var body: some View {
-        HStack(spacing: 7) {
+        HStack(spacing: 8) {
             Image(systemName: symbol)
-                .font(.title3.weight(.regular))
+                .font(.system(size: 30, weight: .regular))
                 .foregroundStyle(tint)
+                .frame(width: 32, height: 32)
 
             Text("\(label) \(value)")
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
+                .font(.system(size: 22, weight: .semibold, design: .rounded))
                 .foregroundStyle(Color.moonText)
                 .lineLimit(1)
-                .minimumScaleFactor(0.72)
+                .minimumScaleFactor(0.58)
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .ignore)
@@ -273,8 +274,8 @@ private struct StatusDivider: View {
     var body: some View {
         Rectangle()
             .fill(.white.opacity(0.16))
-            .frame(width: 1, height: 50)
-            .padding(.horizontal, 10)
+            .frame(width: 1, height: 62)
+            .padding(.horizontal, 4)
     }
 }
 
