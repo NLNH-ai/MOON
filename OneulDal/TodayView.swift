@@ -213,17 +213,18 @@ struct TodayView: View {
                     .foregroundStyle(Color.moonText)
                     .lineLimit(1)
                     .minimumScaleFactor(0.76)
+                    .layoutPriority(1)
 
-                Spacer(minLength: 12)
+                Spacer(minLength: 10)
 
                 Button {
                     selectedTab = .calendar
                 } label: {
                     Text("달력 전체 보기")
-                        .font(.system(size: 22, weight: .semibold, design: .rounded))
+                        .font(.system(size: 20, weight: .semibold, design: .rounded))
                         .foregroundStyle(Color.moonGold)
                         .lineLimit(1)
-                        .minimumScaleFactor(0.72)
+                        .minimumScaleFactor(0.68)
                         .padding(.vertical, 6)
                         .contentShape(Rectangle())
                 }
