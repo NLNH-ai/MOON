@@ -12,20 +12,29 @@ Artifacts:
 - `OneulDalTests.xcresult`
 - Xcode logs
 
-## TestFlight build
+## TestFlight internal build
 
-Run `ios-testflight` after Apple signing is ready.
+Run `ios-testflight` after Apple signing is ready. This workflow creates an App Store signed IPA and uploads it to App Store Connect for TestFlight internal testing.
 
 Required Codemagic setup:
 
 - Connect the repository containing this `oneuldal-ios` folder.
 - Make Codemagic read `codemagic.yaml` from the project root.
-- Add an App Store Connect integration named `oneuldal-app-store-connect`, or update `codemagic.yaml` to match your integration name.
-- Create or fetch an App Store provisioning profile for `com.oneuldal.app`.
-- Set `DEVELOPMENT_TEAM` in Codemagic variables.
-- Confirm `PROVISIONING_PROFILE_SPECIFIER` matches the profile name. The default is `OneulDal App Store Profile`.
+- In Apple Developer, create an explicit App ID for `com.oneuldal.app`.
+- In App Store Connect, create the app record using bundle ID `com.oneuldal.app`.
+- In App Store Connect, create a dedicated API key with `App Manager` access and download the `.p8` key once.
+- In Codemagic Team settings > Team integrations > Developer Portal, add that API key with the name `oneuldal-app-store-connect`, or update `codemagic.yaml` to match your integration name.
+- In Codemagic Team settings > codemagic.yaml settings > Code signing identities, add or generate an `Apple Distribution` certificate.
+- In Codemagic Team settings > codemagic.yaml settings > Code signing identities > iOS provisioning profiles, fetch or upload an App Store profile matching `com.oneuldal.app`.
 
 If App Store Connect uses a different bundle id, update `BUNDLE_ID` in `codemagic.yaml` before running the TestFlight workflow.
+
+The workflow uses Codemagic CLI tooling to apply matching App Store signing files:
+
+- `xcode-project use-profiles --custom-export-options='{"testFlightInternalTestingOnly": true}'`
+- `xcode-project build-ipa`
+
+The `testFlightInternalTestingOnly` export option is intentional for quick device testing. It avoids external beta review and limits the build to App Store Connect internal tester groups.
 
 ## Trigger
 

@@ -78,7 +78,7 @@ workflows:
       - /tmp/xcodebuild_logs/*.log
 
   ios-testflight:
-    name: OneulDal iOS TestFlight
+    name: OneulDal iOS TestFlight Internal
     instance_type: mac_mini_m2
     max_build_duration: 60
     integrations:
@@ -90,7 +90,6 @@ workflows:
         BUNDLE_ID: "com.oneuldal.app"
         XCODE_PROJECT: OneulDal.xcodeproj
         XCODE_SCHEME: OneulDal
-        PROVISIONING_PROFILE_SPECIFIER: "OneulDal App Store Profile"
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.oneuldal.app
@@ -104,11 +103,9 @@ workflows:
       - name: Validate release environment
         script: |
           set -euo pipefail
-          : "${DEVELOPMENT_TEAM:?Set DEVELOPMENT_TEAM in Codemagic variables.}"
-          : "${PROVISIONING_PROFILE_SPECIFIER:?Set PROVISIONING_PROFILE_SPECIFIER in Codemagic variables.}"
           xcodebuild -version
           xcodebuild -list -project "$XCODE_PROJECT"
-      - name: Apply release signing settings
+      - name: Prepare release build settings
         script: |
           set -euo pipefail
           python3 - <<'PY'
@@ -119,90 +116,41 @@ workflows:
           project_path = Path("OneulDal.xcodeproj/project.pbxproj")
           project = project_path.read_text(encoding="utf-8")
           bundle_id = os.environ["BUNDLE_ID"]
-          development_team = os.environ["DEVELOPMENT_TEAM"]
-          profile = os.environ["PROVISIONING_PROFILE_SPECIFIER"]
           app_version = os.environ.get("APP_VERSION", "1.0.0")
           build_number = os.environ.get("IOS_BUILD_NUMBER") or os.environ.get("BUILD_NUMBER") or "1"
 
           project = re.sub(r"CURRENT_PROJECT_VERSION = [^;]+;", f"CURRENT_PROJECT_VERSION = {build_number};", project)
           project = re.sub(r"MARKETING_VERSION = [^;]+;", f"MARKETING_VERSION = {app_version};", project)
-          project = re.sub(r"PRODUCT_BUNDLE_IDENTIFIER = com\.[^;]+;", f"PRODUCT_BUNDLE_IDENTIFIER = {bundle_id};", project)
-
-          def upsert(block, key, value):
-              pattern = re.compile(rf"(\n\s*){re.escape(key)} = [^;]+;")
-              if pattern.search(block):
-                  return pattern.sub(rf"\1{key} = {value};", block)
-              marker = re.search(r"\n(\s*)PRODUCT_BUNDLE_IDENTIFIER = [^;]+;", block)
-              if marker:
-                  indent = marker.group(1)
-                  return block.replace(marker.group(0), f"\n{indent}{key} = {value};{marker.group(0)}")
-              return block
-
-          def update_build_settings(match):
-              block = match.group(0)
-              if "PRODUCT_BUNDLE_IDENTIFIER" not in block:
-                  return block
-              block = upsert(block, "CODE_SIGN_IDENTITY", '"Apple Distribution"')
-              block = upsert(block, "CODE_SIGN_STYLE", "Manual")
-              block = upsert(block, "DEVELOPMENT_TEAM", development_team)
-              block = upsert(block, "PROVISIONING_PROFILE_SPECIFIER", f'"{profile}"')
-              return block
-
-          project = re.sub(r"buildSettings = \{[\s\S]*?\n\s*\};", update_build_settings, project)
+          project = re.sub(
+              r"PRODUCT_BUNDLE_IDENTIFIER = (?:com\.codex\.oneuldal|com\.oneuldal\.app);",
+              f"PRODUCT_BUNDLE_IDENTIFIER = {bundle_id};",
+              project,
+          )
+          project = re.sub(
+              r"PRODUCT_BUNDLE_IDENTIFIER = (?:com\.codex\.oneuldal\.tests|com\.oneuldal\.app\.tests);",
+              f"PRODUCT_BUNDLE_IDENTIFIER = {bundle_id}.tests;",
+              project,
+          )
           project_path.write_text(project, encoding="utf-8")
           print(f"Prepared {bundle_id} version {app_version} build {build_number}.")
           PY
-      - name: Build signed archive
+      - name: Set up App Store code signing
         script: |
           set -euo pipefail
-          mkdir -p "$CM_BUILD_DIR/build/ios/archive" "$CM_BUILD_DIR/build/ios/ipa"
-          xcodebuild archive \
-            -project "$XCODE_PROJECT" \
-            -scheme "$XCODE_SCHEME" \
-            -configuration Release \
-            -sdk iphoneos \
-            -destination "generic/platform=iOS" \
-            -archivePath "$CM_BUILD_DIR/build/ios/archive/OneulDal.xcarchive"
-      - name: Export IPA
+          xcode-project use-profiles \
+            --project "$CM_BUILD_DIR/$XCODE_PROJECT" \
+            --custom-export-options='{"testFlightInternalTestingOnly": true}'
+      - name: Build IPA for TestFlight
         script: |
           set -euo pipefail
-          cat > "$CM_BUILD_DIR/build/ios/exportOptions.plist" <<EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-            <key>method</key>
-            <string>app-store-connect</string>
-            <key>signingStyle</key>
-            <string>manual</string>
-            <key>teamID</key>
-            <string>$DEVELOPMENT_TEAM</string>
-            <key>signingCertificate</key>
-            <string>Apple Distribution</string>
-            <key>provisioningProfiles</key>
-            <dict>
-              <key>$BUNDLE_ID</key>
-              <string>$PROVISIONING_PROFILE_SPECIFIER</string>
-            </dict>
-            <key>stripSwiftSymbols</key>
-            <true/>
-            <key>compileBitcode</key>
-            <false/>
-          </dict>
-          </plist>
-          EOF
-          plutil -lint "$CM_BUILD_DIR/build/ios/exportOptions.plist"
-          xcodebuild -exportArchive \
-            -archivePath "$CM_BUILD_DIR/build/ios/archive/OneulDal.xcarchive" \
-            -exportOptionsPlist "$CM_BUILD_DIR/build/ios/exportOptions.plist" \
-            -exportPath "$CM_BUILD_DIR/build/ios/ipa"
+          xcode-project build-ipa \
+            --project "$CM_BUILD_DIR/$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
     artifacts:
       - build/ios/ipa/*.ipa
-      - build/ios/exportOptions.plist
-      - build/ios/archive/*.xcarchive
+      - $HOME/export_options.plist
       - /tmp/xcodebuild_logs/*.log
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true
