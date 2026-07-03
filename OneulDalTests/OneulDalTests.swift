@@ -11,7 +11,7 @@ final class OneulDalTests: XCTestCase {
         XCTAssertEqual(today.visibilityMessage, "지금 떠 있어요")
     }
 
-    func testNextFullMoonIsFirstEvent() {
+    func testNextFullMoonIsFirstEvent() throws {
         let event = try XCTUnwrap(MoonFixtures.nextEvents.first)
 
         XCTAssertEqual(event.title, "다음 보름달")
