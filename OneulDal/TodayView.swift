@@ -208,9 +208,9 @@ struct TodayView: View {
                             .layoutPriority(1)
 
                         Image(systemName: "chevron.right")
-                            .font(.system(size: 30, weight: .semibold))
+                            .font(.system(size: MoonLayout.nextMoonChevronSize, weight: .semibold))
                             .foregroundStyle(Color.moonSubtext.opacity(MoonLayout.nextMoonChevronOpacity))
-                            .frame(width: 30, height: 34)
+                            .frame(width: MoonLayout.nextMoonChevronSize, height: MoonLayout.nextMoonChevronSize + 4)
                     }
                 }
                 .padding(.vertical, 4)
