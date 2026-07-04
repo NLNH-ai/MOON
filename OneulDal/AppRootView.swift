@@ -67,7 +67,7 @@ struct AppRootView: View {
         let normalTabItemFont = UIFont.systemFont(ofSize: 13, weight: .medium)
         let selectedColor = UIColor(red: 0.905, green: 0.843, blue: 0.604, alpha: CGFloat(MoonLayout.tabSelectedOpacity))
         let normalColor = UIColor(red: 0.667, green: 0.706, blue: 0.773, alpha: CGFloat(MoonLayout.tabNormalOpacity))
-        let tabBackground = UIColor(red: 0.030, green: 0.034, blue: 0.047, alpha: 0.86)
+        let tabBackground = UIColor(red: 0.030, green: 0.034, blue: 0.047, alpha: CGFloat(MoonLayout.tabBackgroundOpacity))
 
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
