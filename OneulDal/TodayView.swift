@@ -237,7 +237,7 @@ struct TodayView: View {
                     selectedTab = .calendar
                 } label: {
                     Text("달력 전체 보기")
-                        .font(.system(size: 20, weight: .semibold, design: .rounded))
+                        .font(.system(size: MoonLayout.monthPreviewActionTextSize, weight: .semibold, design: .rounded))
                         .lineLimit(1)
                         .minimumScaleFactor(0.68)
                         .foregroundStyle(Color.moonGold.opacity(MoonLayout.monthPreviewActionOpacity))
