@@ -13,7 +13,7 @@ extension Color {
 enum MoonLayout {
     static let cardCornerRadius: CGFloat = 30
     static let glassPanelFillOpacity: Double = 0.86
-    static let glassPanelShadowOpacity: Double = 0.20
+    static let glassPanelShadowOpacity: Double = 0.16
     static let glassPanelBorderOpacity: Double = 0.10
     static let headerSideRailWidth: CGFloat = 84
     static let headerTitleTextSize: CGFloat = 54
