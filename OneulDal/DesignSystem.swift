@@ -30,7 +30,7 @@ enum MoonLayout {
     static let heroPhaseSubtitleTextSize: CGFloat = 22
     static let nextMoonTitleTextSize: CGFloat = 30
     static let nextMoonDateTextSize: CGFloat = 20
-    static let nextMoonCountdownTextSize: CGFloat = 34
+    static let nextMoonCountdownTextSize: CGFloat = 32
     static let nextMoonChevronOpacity: Double = 0.82
     static let nextMoonChevronSize: CGFloat = 28
     static let previewMoonThumbnailSize: CGFloat = 82
