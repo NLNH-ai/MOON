@@ -47,7 +47,7 @@ enum MoonLayout {
     static let tabNormalOpacity: Double = 0.66
     static let tabBackgroundOpacity: Double = 0.76
     static let statusMetricTextSize: CGFloat = 20
-    static let statusMetricIconSize: CGFloat = 27
+    static let statusMetricIconSize: CGFloat = 25
     static let statusMetricIconFrameSize: CGFloat = 30
     static let statusMetricContentSpacing: CGFloat = 8
     static let statusDividerHeight: CGFloat = 52
