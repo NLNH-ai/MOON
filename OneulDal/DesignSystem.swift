@@ -18,7 +18,7 @@ enum MoonLayout {
     static let headerSideRailWidth: CGFloat = 84
     static let headerTitleTextSize: CGFloat = 54
     static let headerLocationTextSize: CGFloat = 23
-    static let headerSettingsIconSize: CGFloat = 32
+    static let headerSettingsIconSize: CGFloat = 30
     static let heroImageHorizontalInset: CGFloat = 30
     static let heroImageCornerRadius: CGFloat = 6
     static let heroImageBorderOpacity: Double = 0.03
