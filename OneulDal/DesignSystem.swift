@@ -34,7 +34,7 @@ enum MoonLayout {
     static let nextMoonChevronOpacity: Double = 0.66
     static let nextMoonChevronSize: CGFloat = 26
     static let previewMoonThumbnailSize: CGFloat = 82
-    static let previewMoonThumbnailStrokeOpacity: Double = 0.20
+    static let previewMoonThumbnailStrokeOpacity: Double = 0.16
     static let previewMoonThumbnailGlowOpacity: Double = 0.08
     static let monthPreviewActionOpacity: Double = 0.76
     static let monthPreviewActionTextSize: CGFloat = 19
