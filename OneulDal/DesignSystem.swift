@@ -39,7 +39,7 @@ enum MoonLayout {
     static let monthPreviewActionOpacity: Double = 0.62
     static let monthPreviewActionTextSize: CGFloat = 18
     static let monthPreviewTitleTextSize: CGFloat = 25
-    static let monthPreviewTopPadding: CGFloat = 18
+    static let monthPreviewTopPadding: CGFloat = 16
     static let previewMoonPercentOpacity: Double = 0.70
     static let previewMoonCellSize: CGFloat = 36
     static let selectedDayBadgeSize: CGFloat = 35
