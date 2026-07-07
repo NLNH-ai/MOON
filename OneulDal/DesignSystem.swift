@@ -57,7 +57,7 @@ enum MoonLayout {
     static let timeDividerHorizontalInset: CGFloat = 4
     static let timeDividerOpacity: Double = 0.06
     static let timeIconSize: CGFloat = 27
-    static let timeLabelTextSize: CGFloat = 21
+    static let timeLabelTextSize: CGFloat = 20
     static let timeMetricStackSpacing: CGFloat = 12
     static let timeMetricLabelSpacing: CGFloat = 8
     static let timeValueFontSize: CGFloat = 38
