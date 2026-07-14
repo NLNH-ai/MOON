@@ -28,7 +28,7 @@ struct TodayView: View {
                 MoonBackground()
 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 20) {
+                    VStack(spacing: 18) {
                         topBar
                         moonHero
                         statusRow
@@ -37,7 +37,7 @@ struct TodayView: View {
                         monthPreview
                     }
                     .padding(.horizontal, 22)
-                    .padding(.top, 18)
+                    .padding(.top, 14)
                     .padding(.bottom, 104)
                 }
             }
@@ -56,100 +56,108 @@ struct TodayView: View {
     }
 
     private var topBar: some View {
-        HStack(alignment: .center, spacing: 8) {
-            Button {
-                activeSheet = .location
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "location.north.circle")
-                        .font(.system(size: MoonLayout.headerLocationTextSize, weight: .semibold))
-                    Text(selectedCity)
-                        .font(.system(size: MoonLayout.headerLocationTextSize, weight: .semibold, design: .rounded))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.82)
-                }
-                .foregroundStyle(Color.moonText)
-                .frame(width: MoonLayout.headerSideRailWidth, height: 52, alignment: .leading)
-                .contentShape(Rectangle())
-            }
-            .accessibilityLabel("지역 \(selectedCity)")
-
+        ZStack {
             Text("오늘달")
                 .font(.system(size: MoonLayout.headerTitleTextSize, weight: .heavy, design: .rounded))
                 .foregroundStyle(Color.moonText)
                 .lineLimit(1)
-                .minimumScaleFactor(0.68)
-                .frame(maxWidth: .infinity)
+                .minimumScaleFactor(0.78)
 
-            Button {
-                activeSheet = .settings
-            } label: {
-                Image(systemName: "gearshape")
-                    .font(.system(size: MoonLayout.headerSettingsIconSize, weight: .semibold))
-                    .foregroundStyle(Color.moonText)
-                    .frame(width: 52, height: 52)
-                    .frame(width: MoonLayout.headerSideRailWidth, alignment: .trailing)
-                    .contentShape(Rectangle())
+            HStack {
+                Button {
+                    activeSheet = .location
+                } label: {
+                    MoonChip(selectedCity, symbolName: "location.fill", tint: Color.moonAqua)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("지역 \(selectedCity)")
+
+                Spacer()
+
+                Button {
+                    activeSheet = .settings
+                } label: {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 19, weight: .semibold))
+                        .foregroundStyle(Color.moonText)
+                        .frame(width: 42, height: 42)
+                        .background(.white.opacity(0.07), in: Circle())
+                        .overlay(
+                            Circle()
+                                .stroke(.white.opacity(0.08), lineWidth: 1)
+                        )
+                }
+                .accessibilityLabel("설정")
             }
-            .accessibilityLabel("설정")
         }
+        .frame(height: 46)
     }
 
     private var moonHero: some View {
-        VStack(spacing: 16) {
-            VStack(spacing: 12) {
-                Text("2026. 7. 2 오늘")
-                    .font(.system(size: MoonLayout.heroDateTextSize, weight: .semibold, design: .rounded))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.78)
-                    .foregroundStyle(Color.moonSubtext)
-                    .frame(maxWidth: .infinity)
+        GlassPanel(padding: 16) {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("오늘의 달")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(Color.moonGold)
 
-                Image("MoonWaxingGibbous")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(maxWidth: .infinity)
-                    .aspectRatio(1, contentMode: .fit)
-                    .clipShape(RoundedRectangle(cornerRadius: MoonLayout.heroImageCornerRadius, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: MoonLayout.heroImageCornerRadius, style: .continuous)
-                            .stroke(.white.opacity(MoonLayout.heroImageBorderOpacity), lineWidth: 1)
-                    )
-                    .shadow(
-                        color: Color.moonGold.opacity(MoonLayout.heroImageShadowOpacity),
-                        radius: MoonLayout.heroImageShadowRadius,
-                        x: 0,
-                        y: MoonLayout.heroImageShadowYOffset
-                    )
-                    .padding(.horizontal, MoonLayout.heroImageHorizontalInset)
-                    .accessibilityLabel("상현망간의 달 이미지")
-            }
+                        Text("2026. 7. 2 · 오늘")
+                            .font(.system(size: MoonLayout.heroDateTextSize, weight: .semibold, design: .rounded))
+                            .foregroundStyle(Color.moonSubtext)
+                    }
 
-            VStack(spacing: 8) {
-                Text(today.phaseNameKo)
-                    .font(.system(size: MoonLayout.heroPhaseTitleTextSize, weight: .heavy, design: .rounded))
-                    .foregroundStyle(Color.moonGold)
-                    .minimumScaleFactor(0.68)
-                    .lineLimit(1)
+                    Spacer()
 
-                Text(today.phaseNameEn)
-                    .font(.system(size: MoonLayout.heroPhaseSubtitleTextSize, weight: .semibold, design: .rounded))
-                    .foregroundStyle(Color.moonSubtext)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.82)
+                    MoonChip("밝기 \(today.illumination)%", symbolName: "sun.max", tint: Color.moonGold)
+                }
+
+                HStack(alignment: .center, spacing: 18) {
+                    Image("MoonWaxingGibbous")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 132, height: 132)
+                        .clipShape(Circle())
+                        .overlay(
+                            Circle()
+                                .stroke(Color.moonGold.opacity(0.20), lineWidth: 1)
+                        )
+                        .shadow(color: Color.moonGold.opacity(0.16), radius: 14, x: 0, y: 7)
+                        .accessibilityLabel("상현망간의 달 이미지")
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(today.phaseNameKo)
+                            .font(.system(size: MoonLayout.heroPhaseTitleTextSize, weight: .heavy, design: .rounded))
+                            .foregroundStyle(Color.moonText)
+                            .minimumScaleFactor(0.70)
+                            .lineLimit(2)
+
+                        Text(today.phaseNameEn)
+                            .font(.system(size: MoonLayout.heroPhaseSubtitleTextSize, weight: .semibold, design: .rounded))
+                            .foregroundStyle(Color.moonSubtext)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.78)
+
+                        Label(today.waxingText, systemImage: "arrow.up.right")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(Color.moonAqua)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
         }
     }
 
     private var statusRow: some View {
-        HStack(spacing: 0) {
-            StatusMetric(symbol: "sun.max", label: "밝기", value: "\(today.illumination)%")
-            StatusDivider()
-            StatusMetric(symbol: "moon", label: "달령", value: String(format: "%.1f일", today.moonAge))
-            StatusDivider()
-            StatusMetric(symbol: "circle.fill", label: "지금", value: "떠 있어요", tint: Color.moonGold)
+        GlassPanel(padding: 14) {
+            HStack(spacing: 0) {
+                StatusMetric(symbol: "sun.max", label: "밝기", value: "\(today.illumination)%")
+                StatusDivider()
+                StatusMetric(symbol: "moon", label: "달령", value: String(format: "%.1f일", today.moonAge))
+                StatusDivider()
+                StatusMetric(symbol: "circle.fill", label: "지금", value: "떠 있어요", tint: Color.moonGold)
+            }
         }
-        .padding(.vertical, 12)
         .accessibilityElement(children: .combine)
     }
 
@@ -159,26 +167,12 @@ struct TodayView: View {
         } label: {
             GlassPanel {
                 HStack(spacing: 18) {
-                    Image("MoonWaxingGibbous")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: MoonLayout.previewMoonThumbnailSize, height: MoonLayout.previewMoonThumbnailSize)
-                        .clipShape(Circle())
-                        .background(
-                            Circle()
-                                .fill(Color.black.opacity(0.30))
-                                .shadow(color: .black.opacity(0.34), radius: 10, x: 0, y: 6)
-                        )
-                        .overlay(
-                            Circle()
-                                .stroke(Color.moonGold.opacity(MoonLayout.previewMoonThumbnailStrokeOpacity), lineWidth: 1)
-                        )
-                        .shadow(
-                            color: Color.moonGold.opacity(MoonLayout.previewMoonThumbnailGlowOpacity),
-                            radius: 10,
-                            x: 0,
-                            y: 0
-                        )
+                    MoonPhaseGlyph(
+                        illumination: 100,
+                        isWaxing: false,
+                        size: 64,
+                        isEmphasized: true
+                    )
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("다음 보름달")
@@ -269,26 +263,25 @@ private struct StatusMetric: View {
     var tint: Color = Color.moonText
 
     var body: some View {
-        HStack(spacing: MoonLayout.statusMetricContentSpacing) {
-            Image(systemName: symbol)
-                .font(.system(size: MoonLayout.statusMetricIconSize, weight: .regular))
-                .foregroundStyle(tint)
-                .frame(width: MoonLayout.statusMetricIconFrameSize, height: MoonLayout.statusMetricIconFrameSize)
+        VStack(alignment: .leading, spacing: 5) {
+            HStack(spacing: MoonLayout.statusMetricContentSpacing) {
+                Image(systemName: symbol)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(tint)
 
-            HStack(spacing: 4) {
                 Text(label)
-                    .font(.system(size: MoonLayout.statusMetricTextSize, weight: .semibold, design: .rounded))
-
-                Text(value)
-                    .font(.system(size: MoonLayout.statusMetricTextSize, weight: .bold, design: .rounded))
-                    .monospacedDigit()
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Color.moonSubtext)
             }
-            .foregroundStyle(Color.moonText)
-            .lineLimit(1)
-            .minimumScaleFactor(0.66)
-            .layoutPriority(1)
+
+            Text(value)
+                .font(.subheadline.weight(.bold))
+                .monospacedDigit()
+                .foregroundStyle(Color.moonText)
+                .lineLimit(1)
+                .minimumScaleFactor(0.72)
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(label) \(value)")
     }
@@ -314,24 +307,6 @@ private struct WeekMoonCell: View {
         return MoonLayout.previewMoonCellSize
     }
 
-    private var phaseShadowOpacity: Double {
-        max(0.0, min(0.52, Double(100 - day.illumination) / 82.0))
-    }
-
-    private var moonStrokeColor: Color {
-        if isToday {
-            return Color.moonGold.opacity(0.42)
-        }
-        return Color.white.opacity(0.08)
-    }
-
-    private var moonGlowOpacity: Double {
-        if isToday {
-            return 0.18
-        }
-        return 0.06
-    }
-
     var body: some View {
         VStack(spacing: 8) {
             Text("\(day.day)")
@@ -343,31 +318,12 @@ private struct WeekMoonCell: View {
                 )
                 .background(isToday ? Color.moonGold : Color.clear, in: Circle())
 
-            Image("MoonWaxingGibbous")
-                .resizable()
-                .scaledToFill()
-                .frame(width: moonSize, height: moonSize)
-                .clipShape(Circle())
-                .opacity(max(0.42, Double(day.illumination) / 100.0))
-                .overlay {
-                    LinearGradient(
-                        colors: [
-                            Color.black.opacity(phaseShadowOpacity),
-                            Color.black.opacity(phaseShadowOpacity * 0.68),
-                            Color.clear
-                        ],
-                        startPoint: day.isWaxing ? .leading : .trailing,
-                        endPoint: day.isWaxing ? .trailing : .leading
-                    )
-                    .clipShape(Circle())
-                    .blendMode(.multiply)
-                }
-                .overlay(
-                    Circle()
-                        .stroke(moonStrokeColor, lineWidth: 1)
-                )
-                .shadow(color: Color.moonGold.opacity(moonGlowOpacity), radius: isToday ? 8 : 4, x: 0, y: 0)
-                .accessibilityHidden(true)
+            MoonPhaseGlyph(
+                illumination: day.illumination,
+                isWaxing: day.isWaxing,
+                size: moonSize,
+                isEmphasized: isToday || day.isMajorPhase
+            )
 
             Text("\(day.illumination)%")
                 .font(.system(
@@ -392,7 +348,7 @@ private struct MoonTimesPanel: View {
     let day: MoonDay
 
     var body: some View {
-        GlassPanel {
+        GlassPanel(padding: 16) {
             HStack(spacing: 0) {
                 TimeMetricView(symbol: "arrow.up", title: "월출", time: day.moonrise)
                 VerticalDivider()

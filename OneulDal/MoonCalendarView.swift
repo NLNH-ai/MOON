@@ -12,14 +12,14 @@ struct MoonCalendarView: View {
                 MoonBackground()
 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 18) {
+                    VStack(spacing: 16) {
                         header
                         monthNavigator
                         calendarBoard
                         SelectedMoonDayPanel(day: selectedDay)
                     }
                     .padding(.horizontal, 22)
-                    .padding(.top, 18)
+                    .padding(.top, 14)
                     .padding(.bottom, 34)
                 }
             }
@@ -38,7 +38,7 @@ struct MoonCalendarView: View {
     }
 
     private var monthNavigator: some View {
-        GlassPanel {
+        GlassPanel(padding: 12) {
             HStack(spacing: 14) {
                 navigationButton(symbol: "chevron.left", accessibilityLabel: "이전 날짜") {
                     selectedDay = MoonFixtures.day(for: max(1, selectedDay.day - 1))
@@ -73,9 +73,9 @@ struct MoonCalendarView: View {
     ) -> some View {
         Button(action: action) {
             Image(systemName: symbol)
-                .font(.headline.weight(.bold))
+                .font(.subheadline.weight(.bold))
                 .foregroundStyle(Color.moonGold)
-                .frame(width: 38, height: 38)
+                .frame(width: 36, height: 36)
                 .background(.white.opacity(0.07), in: Circle())
                 .overlay(
                     Circle()
@@ -86,7 +86,7 @@ struct MoonCalendarView: View {
     }
 
     private var calendarBoard: some View {
-        GlassPanel {
+        GlassPanel(padding: 14) {
             VStack(spacing: 12) {
                 weekdayHeader
                 calendarGrid
@@ -144,16 +144,12 @@ private struct CalendarMoonCell: View {
                     .frame(width: 22, height: 22)
                     .background(isToday ? Color.moonGold : Color.clear, in: Circle())
 
-                Image("MoonWaxingGibbous")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: isSelected || day.isMajorPhase ? 27 : 24, height: isSelected || day.isMajorPhase ? 27 : 24)
-                    .clipShape(Circle())
-                    .opacity(max(0.34, Double(day.illumination) / 100.0))
-                    .overlay(
-                        Circle()
-                            .stroke(day.isMajorPhase ? Color.moonGold.opacity(0.5) : Color.white.opacity(0.07), lineWidth: 1)
-                    )
+                MoonPhaseGlyph(
+                    illumination: day.illumination,
+                    isWaxing: day.isWaxing,
+                    size: isSelected || day.isMajorPhase ? 28 : 24,
+                    isEmphasized: isSelected || day.isMajorPhase
+                )
 
                 Text(day.majorPhaseLabel ?? "\(day.illumination)%")
                     .font(.system(size: 10, weight: day.isMajorPhase ? .bold : .regular))
@@ -161,12 +157,12 @@ private struct CalendarMoonCell: View {
                     .minimumScaleFactor(0.7)
                     .foregroundStyle(day.isMajorPhase ? Color.moonGold : Color.moonSubtext)
             }
-            .frame(maxWidth: .infinity, minHeight: 64)
+            .frame(maxWidth: .infinity, minHeight: 62)
             .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: MoonLayout.compactPanelCornerRadius, style: .continuous)
                     .fill(cellFill)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        RoundedRectangle(cornerRadius: MoonLayout.compactPanelCornerRadius, style: .continuous)
                             .stroke(cellStroke, lineWidth: 1)
                     )
             )
@@ -205,19 +201,15 @@ private struct SelectedMoonDayPanel: View {
     let day: MoonDay
 
     var body: some View {
-        GlassPanel {
-            VStack(alignment: .leading, spacing: 18) {
+        GlassPanel(padding: 16) {
+            VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .top, spacing: 16) {
-                    Image("MoonWaxingGibbous")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 74, height: 74)
-                        .clipShape(Circle())
-                        .opacity(max(0.35, Double(day.illumination) / 100.0))
-                        .overlay(
-                            Circle()
-                                .stroke(Color.moonGold.opacity(day.isMajorPhase ? 0.55 : 0.22), lineWidth: 1)
-                        )
+                    MoonPhaseGlyph(
+                        illumination: day.illumination,
+                        isWaxing: day.isWaxing,
+                        size: 68,
+                        isEmphasized: day.isMajorPhase
+                    )
 
                     VStack(alignment: .leading, spacing: 6) {
                         Text(day.dateTitle)

@@ -13,14 +13,14 @@ struct MoonNotificationsView: View {
                 MoonBackground()
 
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 18) {
                         header
                         statusStrip
                         reminderList
                         permissionCard
                     }
                     .padding(.horizontal, 22)
-                    .padding(.top, 20)
+                    .padding(.top, 16)
                     .padding(.bottom, 34)
                 }
             }
@@ -48,16 +48,21 @@ struct MoonNotificationsView: View {
     }
 
     private var statusStrip: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 104), spacing: 8)], spacing: 8) {
-            ReminderStatusMetric(symbol: "moon.stars.fill", title: "주요 위상", value: fullMoonEnabled ? "대기 중" : "꺼짐")
-            ReminderStatusMetric(symbol: "hand.raised.fill", title: "권한", value: "켤 때 요청", tint: Color.moonAqua)
-            ReminderStatusMetric(symbol: "speaker.wave.2.fill", title: "소리", value: "조용히", tint: Color.moonSubtext)
+        GlassPanel(padding: 14) {
+            HStack(spacing: 0) {
+                ReminderStatusMetric(symbol: "moon.stars.fill", title: "주요 위상", value: fullMoonEnabled ? "대기 중" : "꺼짐")
+                NotificationStatusDivider()
+                ReminderStatusMetric(symbol: "hand.raised.fill", title: "권한", value: "켤 때 요청", tint: Color.moonAqua)
+                NotificationStatusDivider()
+                ReminderStatusMetric(symbol: "speaker.wave.2.fill", title: "소리", value: "조용히", tint: Color.moonSubtext)
+            }
         }
+        .accessibilityElement(children: .combine)
     }
 
     private var reminderList: some View {
-        GlassPanel {
-            VStack(alignment: .leading, spacing: 14) {
+        GlassPanel(padding: 14) {
+            VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .firstTextBaseline) {
                     Text("받을 알림")
                         .font(.headline.weight(.semibold))
@@ -102,7 +107,7 @@ struct MoonNotificationsView: View {
     }
 
     private var permissionCard: some View {
-        GlassPanel {
+        GlassPanel(padding: 16) {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(spacing: 12) {
                     Image(systemName: "hand.raised.fill")
@@ -146,11 +151,11 @@ private struct NotificationToggleRow: View {
 
     var body: some View {
         Toggle(isOn: $isOn) {
-            HStack(spacing: 14) {
+            HStack(spacing: 12) {
                 Image(systemName: symbol)
                     .font(.headline.weight(.semibold))
                     .foregroundStyle(isOn ? Color.moonBackground : Color.moonSubtext)
-                    .frame(width: 38, height: 38)
+                    .frame(width: 34, height: 34)
                     .background(isOn ? Color.moonGold : Color.white.opacity(0.06), in: Circle())
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -169,12 +174,13 @@ private struct NotificationToggleRow: View {
             }
         }
         .tint(Color.moonGold)
-        .padding(12)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
         .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
+            RoundedRectangle(cornerRadius: MoonLayout.compactPanelCornerRadius, style: .continuous)
                 .fill(isOn ? Color.moonGold.opacity(0.08) : Color.white.opacity(0.035))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    RoundedRectangle(cornerRadius: MoonLayout.compactPanelCornerRadius, style: .continuous)
                         .stroke(isOn ? Color.moonGold.opacity(0.24) : Color.white.opacity(0.05), lineWidth: 1)
                 )
         )
@@ -188,14 +194,18 @@ private struct ReminderStatusMetric: View {
     var tint: Color = Color.moonGold
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 7) {
-            Image(systemName: symbol)
-                .font(.headline.weight(.semibold))
-                .foregroundStyle(tint)
+        VStack(alignment: .leading, spacing: 5) {
+            HStack(spacing: 5) {
+                Image(systemName: symbol)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(tint)
 
-            Text(title)
-                .font(.caption2.weight(.semibold))
-                .foregroundStyle(Color.moonSubtext)
+                Text(title)
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(Color.moonSubtext)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+            }
 
             Text(value)
                 .font(.caption.weight(.bold))
@@ -204,16 +214,16 @@ private struct ReminderStatusMetric: View {
                 .minimumScaleFactor(0.72)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(minHeight: 92, alignment: .topLeading)
-        .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Color.moonSurface.opacity(0.66))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .stroke(.white.opacity(0.06), lineWidth: 1)
-                )
-        )
+        .frame(minHeight: 44, alignment: .topLeading)
+    }
+}
+
+private struct NotificationStatusDivider: View {
+    var body: some View {
+        Rectangle()
+            .fill(.white.opacity(0.07))
+            .frame(width: 1, height: 42)
+            .padding(.horizontal, 8)
     }
 }
 

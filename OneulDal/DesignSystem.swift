@@ -11,26 +11,27 @@ extension Color {
 }
 
 enum MoonLayout {
-    static let cardCornerRadius: CGFloat = 30
-    static let glassPanelFillOpacity: Double = 0.86
-    static let glassPanelShadowOpacity: Double = 0.16
+    static let cardCornerRadius: CGFloat = 24
+    static let compactPanelCornerRadius: CGFloat = 18
+    static let glassPanelFillOpacity: Double = 0.88
+    static let glassPanelShadowOpacity: Double = 0.13
     static let glassPanelBorderOpacity: Double = 0.10
     static let headerSideRailWidth: CGFloat = 84
-    static let headerTitleTextSize: CGFloat = 52
+    static let headerTitleTextSize: CGFloat = 34
     static let headerLocationTextSize: CGFloat = 21
     static let headerSettingsIconSize: CGFloat = 29
-    static let heroImageHorizontalInset: CGFloat = 26
-    static let heroImageCornerRadius: CGFloat = 6
+    static let heroImageHorizontalInset: CGFloat = 0
+    static let heroImageCornerRadius: CGFloat = 68
     static let heroImageBorderOpacity: Double = 0.03
     static let heroImageShadowOpacity: Double = 0.11
     static let heroImageShadowRadius: CGFloat = 18
     static let heroImageShadowYOffset: CGFloat = 6
-    static let heroDateTextSize: CGFloat = 26
-    static let heroPhaseTitleTextSize: CGFloat = 50
-    static let heroPhaseSubtitleTextSize: CGFloat = 22
-    static let nextMoonTitleTextSize: CGFloat = 26
-    static let nextMoonDateTextSize: CGFloat = 19
-    static let nextMoonCountdownTextSize: CGFloat = 26
+    static let heroDateTextSize: CGFloat = 16
+    static let heroPhaseTitleTextSize: CGFloat = 30
+    static let heroPhaseSubtitleTextSize: CGFloat = 17
+    static let nextMoonTitleTextSize: CGFloat = 22
+    static let nextMoonDateTextSize: CGFloat = 17
+    static let nextMoonCountdownTextSize: CGFloat = 22
     static let nextMoonChevronOpacity: Double = 0.54
     static let nextMoonChevronSize: CGFloat = 26
     static let previewMoonThumbnailSize: CGFloat = 82
@@ -53,14 +54,14 @@ enum MoonLayout {
     static let statusDividerHeight: CGFloat = 48
     static let statusDividerHorizontalInset: CGFloat = 2
     static let statusDividerOpacity: Double = 0.06
-    static let timeDividerHeight: CGFloat = 112
+    static let timeDividerHeight: CGFloat = 96
     static let timeDividerHorizontalInset: CGFloat = 4
     static let timeDividerOpacity: Double = 0.06
-    static let timeIconSize: CGFloat = 26
-    static let timeLabelTextSize: CGFloat = 20
-    static let timeMetricStackSpacing: CGFloat = 12
-    static let timeMetricLabelSpacing: CGFloat = 8
-    static let timeValueFontSize: CGFloat = 38
+    static let timeIconSize: CGFloat = 22
+    static let timeLabelTextSize: CGFloat = 17
+    static let timeMetricStackSpacing: CGFloat = 10
+    static let timeMetricLabelSpacing: CGFloat = 6
+    static let timeValueFontSize: CGFloat = 32
 }
 
 struct MoonBackground: View {
@@ -78,7 +79,7 @@ struct MoonBackground: View {
 
             RadialGradient(
                 colors: [
-                    Color.moonGold.opacity(0.22),
+                    Color.moonGold.opacity(0.16),
                     .clear
                 ],
                 center: .topTrailing,
@@ -98,15 +99,17 @@ struct MoonBackground: View {
 }
 
 struct GlassPanel<Content: View>: View {
+    let padding: CGFloat
     let content: Content
 
-    init(@ViewBuilder content: () -> Content) {
+    init(padding: CGFloat = 18, @ViewBuilder content: () -> Content) {
+        self.padding = padding
         self.content = content()
     }
 
     var body: some View {
         content
-            .padding(18)
+            .padding(padding)
             .background(
                 RoundedRectangle(cornerRadius: MoonLayout.cardCornerRadius, style: .continuous)
                     .fill(Color.moonSurface.opacity(MoonLayout.glassPanelFillOpacity))
@@ -148,7 +151,7 @@ struct ScreenHeader<Accessory: View>: View {
                 }
 
                 Text(title)
-                    .font(.system(size: 34, weight: .heavy, design: .rounded))
+                    .font(.system(size: 32, weight: .heavy, design: .rounded))
                     .foregroundStyle(Color.moonText)
                     .lineLimit(1)
                     .minimumScaleFactor(0.82)
@@ -211,6 +214,49 @@ struct MoonChip: View {
         .background(tint, in: Capsule())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityLabel ?? title)
+    }
+}
+
+struct MoonPhaseGlyph: View {
+    let illumination: Int
+    let isWaxing: Bool
+    var size: CGFloat
+    var accent: Color = Color.moonGold
+    var isEmphasized = false
+
+    private var lightFraction: CGFloat {
+        CGFloat(min(max(illumination, 0), 100)) / 100
+    }
+
+    private var shadowOffset: CGFloat {
+        size * lightFraction
+    }
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(accent.opacity(isEmphasized ? 0.98 : 0.84))
+
+            Circle()
+                .fill(Color.moonBackground.opacity(0.96))
+                .offset(x: isWaxing ? -shadowOffset : shadowOffset)
+        }
+        .frame(width: size, height: size)
+        .clipShape(Circle())
+        .overlay(
+            Circle()
+                .stroke(
+                    isEmphasized ? accent.opacity(0.48) : Color.white.opacity(0.12),
+                    lineWidth: 1
+                )
+        )
+        .shadow(
+            color: accent.opacity(isEmphasized ? 0.22 : 0.08),
+            radius: isEmphasized ? 8 : 3,
+            x: 0,
+            y: 0
+        )
+        .accessibilityHidden(true)
     }
 }
 
