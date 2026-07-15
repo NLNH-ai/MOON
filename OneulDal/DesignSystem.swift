@@ -21,6 +21,8 @@ enum MoonLayout {
     static let headerLocationTextSize: CGFloat = 21
     static let headerSettingsIconSize: CGFloat = 29
     static let todayMoonDiameter: CGFloat = 256
+    static let todayMoonContentOffsetX: CGFloat = 21
+    static let todayMoonContentOffsetY: CGFloat = -3
     static let todayPhaseTitleTextSize: CGFloat = 24
     static let todayBrightnessTextSize: CGFloat = 15
     static let todayStatusTextSize: CGFloat = 22

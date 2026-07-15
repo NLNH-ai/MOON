@@ -98,18 +98,28 @@ struct TodayView: View {
         let visibility = today.visibilitySummary(at: date)
 
         return VStack(spacing: 20) {
-            Image("MoonWaxingGibbous")
-                .resizable()
-                .scaledToFill()
-                .frame(width: MoonLayout.todayMoonDiameter, height: MoonLayout.todayMoonDiameter)
-                .clipShape(Circle())
-                .overlay(
-                    Circle()
-                        .stroke(Color.moonGold.opacity(0.16), lineWidth: 1)
-                )
-                .shadow(color: Color.moonGold.opacity(0.14), radius: 20, x: 0, y: 8)
-                .frame(maxWidth: .infinity)
-                .accessibilityHidden(true)
+            ZStack {
+                Color.moonBackground
+
+                // Recenter the lunar disc inside the source photo without moving the hero frame.
+                Image("MoonWaxingGibbous")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: MoonLayout.todayMoonDiameter, height: MoonLayout.todayMoonDiameter)
+                    .offset(
+                        x: MoonLayout.todayMoonContentOffsetX,
+                        y: MoonLayout.todayMoonContentOffsetY
+                    )
+            }
+            .frame(width: MoonLayout.todayMoonDiameter, height: MoonLayout.todayMoonDiameter)
+            .clipShape(Circle())
+            .overlay(
+                Circle()
+                    .stroke(Color.moonGold.opacity(0.16), lineWidth: 1)
+            )
+            .shadow(color: Color.moonGold.opacity(0.14), radius: 20, x: 0, y: 8)
+            .frame(maxWidth: .infinity)
+            .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
