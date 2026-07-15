@@ -1,5 +1,10 @@
 import Foundation
 
+struct MoonVisibilitySummary: Equatable {
+    let status: String
+    let nextEvent: String
+}
+
 struct MoonDay: Identifiable, Equatable {
     let day: Int
     let weekday: String
@@ -28,12 +33,93 @@ struct MoonDay: Identifiable, Equatable {
         isWaxing ? "지금 차는 중" : "지금 기우는 중"
     }
 
-    var visibilityMessage: String {
-        "지금 떠 있어요"
+    var plainLanguagePhaseName: String {
+        switch phaseNameEn {
+        case "Waxing Gibbous":
+            return "보름달로 차오르는 중"
+        case "Waning Gibbous":
+            return "보름달에서 기우는 중"
+        case "Full Moon":
+            return "보름달"
+        case "New Moon":
+            return "달이 거의 보이지 않아요"
+        case "First Quarter":
+            return "반달로 차오르는 중"
+        case "Last Quarter":
+            return "반달로 기우는 중"
+        default:
+            return isWaxing ? "달이 차오르는 중" : "달이 기우는 중"
+        }
     }
 
     var dateTitle: String {
         "7월 \(day)일 \(weekday)"
+    }
+
+    func visibilitySummary(
+        at date: Date,
+        calendar: Calendar = .current
+    ) -> MoonVisibilitySummary {
+        guard
+            let riseMinutes = minutesSinceMidnight(from: moonrise),
+            let transitMinutes = minutesSinceMidnight(from: transit),
+            let setMinutes = minutesSinceMidnight(from: moonset)
+        else {
+            return MoonVisibilitySummary(
+                status: "달 위치를 확인할 수 없어요",
+                nextEvent: "시간 정보를 다시 확인해 주세요"
+            )
+        }
+
+        let components = calendar.dateComponents([.hour, .minute], from: date)
+        let currentMinutes = (components.hour ?? 0) * 60 + (components.minute ?? 0)
+        let transitInCycle = transitMinutes < riseMinutes ? transitMinutes + 1_440 : transitMinutes
+        let setInCycle = setMinutes < riseMinutes ? setMinutes + 1_440 : setMinutes
+        let currentInCycle = setInCycle > 1_440 && currentMinutes < setMinutes
+            ? currentMinutes + 1_440
+            : currentMinutes
+
+        if currentInCycle < riseMinutes {
+            return MoonVisibilitySummary(
+                status: "지금은 떠 있지 않아요",
+                nextEvent: "\(moonrise)에 떠요"
+            )
+        }
+
+        if currentInCycle < transitInCycle {
+            return MoonVisibilitySummary(
+                status: "지금 떠 있어요",
+                nextEvent: "\(transit)에 가장 높이 떠요"
+            )
+        }
+
+        if currentInCycle < setInCycle {
+            return MoonVisibilitySummary(
+                status: "지금 떠 있어요",
+                nextEvent: "\(moonset)에 져요"
+            )
+        }
+
+        return MoonVisibilitySummary(
+            status: "오늘은 졌어요",
+            nextEvent: "내일 \(moonrise)에 떠요"
+        )
+    }
+
+    private func minutesSinceMidnight(from time: String) -> Int? {
+        let parts = time.split(separator: ":")
+
+        guard
+            parts.count == 2,
+            let hour = Int(parts[0]),
+            let minute = Int(parts[1]),
+            (0..<24).contains(hour),
+            (0..<60).contains(minute)
+        else {
+            return nil
+        }
+
+        return hour * 60 + minute
     }
 }
 
@@ -60,11 +146,18 @@ enum MoonFixtures {
         moonset: "00:48"
     )
 
+    static let nextFullMoon = MoonEventSummary(
+        id: "full",
+        title: "다음 보름달",
+        dateText: "7월 7일",
+        countdownText: "5일 뒤"
+    )
+
     static let nextEvents: [MoonEventSummary] = [
-        .init(id: "full", title: "다음 보름달", dateText: "7월 7일", countdownText: "D-5"),
-        .init(id: "new", title: "다음 삭", dateText: "7월 21일", countdownText: "D-19"),
-        .init(id: "first", title: "상현", dateText: "8월 1일", countdownText: "D-30"),
-        .init(id: "last", title: "하현", dateText: "7월 14일", countdownText: "D-12")
+        nextFullMoon,
+        .init(id: "new", title: "다음 삭", dateText: "7월 21일", countdownText: "19일 뒤"),
+        .init(id: "first", title: "상현", dateText: "8월 1일", countdownText: "30일 뒤"),
+        .init(id: "last", title: "하현", dateText: "7월 14일", countdownText: "12일 뒤")
     ]
 
     static let calendarDays: [MoonDay] = [

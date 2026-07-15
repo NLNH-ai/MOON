@@ -20,20 +20,12 @@ enum MoonLayout {
     static let headerTitleTextSize: CGFloat = 34
     static let headerLocationTextSize: CGFloat = 21
     static let headerSettingsIconSize: CGFloat = 29
-    static let heroImageHorizontalInset: CGFloat = 0
-    static let heroImageCornerRadius: CGFloat = 68
-    static let heroImageBorderOpacity: Double = 0.03
-    static let heroImageShadowOpacity: Double = 0.11
-    static let heroImageShadowRadius: CGFloat = 18
-    static let heroImageShadowYOffset: CGFloat = 6
-    static let heroDateTextSize: CGFloat = 16
-    static let heroPhaseTitleTextSize: CGFloat = 30
-    static let heroPhaseSubtitleTextSize: CGFloat = 17
-    static let nextMoonTitleTextSize: CGFloat = 22
-    static let nextMoonDateTextSize: CGFloat = 17
-    static let nextMoonCountdownTextSize: CGFloat = 22
-    static let nextMoonChevronOpacity: Double = 0.54
-    static let nextMoonChevronSize: CGFloat = 26
+    static let todayMoonDiameter: CGFloat = 256
+    static let todayPhaseTitleTextSize: CGFloat = 24
+    static let todayBrightnessTextSize: CGFloat = 15
+    static let todayStatusTextSize: CGFloat = 22
+    static let todayNextEventTextSize: CGFloat = 17
+    static let nextMoonLinkTextSize: CGFloat = 18
     static let previewMoonThumbnailSize: CGFloat = 82
     static let previewMoonThumbnailStrokeOpacity: Double = 0.16
     static let previewMoonThumbnailGlowOpacity: Double = 0.08
@@ -47,21 +39,6 @@ enum MoonLayout {
     static let tabSelectedOpacity: Double = 0.88
     static let tabNormalOpacity: Double = 0.54
     static let tabBackgroundOpacity: Double = 0.62
-    static let statusMetricTextSize: CGFloat = 17
-    static let statusMetricIconSize: CGFloat = 22
-    static let statusMetricIconFrameSize: CGFloat = 30
-    static let statusMetricContentSpacing: CGFloat = 6
-    static let statusDividerHeight: CGFloat = 48
-    static let statusDividerHorizontalInset: CGFloat = 2
-    static let statusDividerOpacity: Double = 0.06
-    static let timeDividerHeight: CGFloat = 96
-    static let timeDividerHorizontalInset: CGFloat = 4
-    static let timeDividerOpacity: Double = 0.06
-    static let timeIconSize: CGFloat = 22
-    static let timeLabelTextSize: CGFloat = 17
-    static let timeMetricStackSpacing: CGFloat = 10
-    static let timeMetricLabelSpacing: CGFloat = 6
-    static let timeValueFontSize: CGFloat = 32
 }
 
 struct MoonBackground: View {
