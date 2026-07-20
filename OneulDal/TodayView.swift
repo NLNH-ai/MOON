@@ -29,7 +29,7 @@ struct TodayView: View {
                     MoonBackground()
 
                     ScrollView(showsIndicators: false) {
-                        VStack(spacing: 18) {
+                        VStack(spacing: 14) {
                             topBar
                             moonHero(at: context.date)
                             if let nextFullMoon = appModel.nextFullMoon {
@@ -38,8 +38,8 @@ struct TodayView: View {
                             monthPreview
                         }
                         .padding(.horizontal, 22)
-                        .padding(.top, 14)
-                        .padding(.bottom, 104)
+                        .padding(.top, 10)
+                        .padding(.bottom, MoonLayout.tabBarContentClearance)
                     }
                 }
             }
@@ -69,7 +69,7 @@ struct TodayView: View {
                 Button {
                     activeSheet = .location
                 } label: {
-                    MoonChip(appModel.selectedLocation.name, symbolName: "location.fill", tint: Color.moonAqua)
+                    TodayLocationChip(locationName: appModel.selectedLocation.name)
                 }
                 .buttonStyle(.plain)
                 .frame(width: MoonLayout.headerSideRailWidth, alignment: .leading)
@@ -100,7 +100,7 @@ struct TodayView: View {
     private func moonHero(at date: Date) -> some View {
         let visibility = today.visibilitySummary(at: date)
 
-        return VStack(spacing: 20) {
+        return VStack(spacing: 16) {
             RealisticMoonView(
                 illumination: today.illumination,
                 isWaxing: today.isWaxing,
@@ -110,11 +110,11 @@ struct TodayView: View {
 
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
-                    Text(today.plainLanguagePhaseName)
-                        .font(.system(size: MoonLayout.todayPhaseTitleTextSize, weight: .bold, design: .rounded))
-                        .foregroundStyle(Color.moonText)
+                    Text(today.dateTitle)
+                        .font(.system(size: MoonLayout.todayDateTextSize, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color.moonGold.opacity(0.78))
                         .lineLimit(1)
-                        .minimumScaleFactor(0.78)
+                        .minimumScaleFactor(0.82)
                         .layoutPriority(1)
 
                     Spacer(minLength: 4)
@@ -125,16 +125,25 @@ struct TodayView: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.82)
                 }
-                .padding(.bottom, 16)
+                .padding(.bottom, 8)
 
                 Text(visibility.status)
                     .font(.system(size: MoonLayout.todayStatusTextSize, weight: .bold, design: .rounded))
                     .foregroundStyle(Color.moonText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.78)
 
                 Text(visibility.nextEvent)
                     .font(.system(size: MoonLayout.todayNextEventTextSize, weight: .medium, design: .rounded))
                     .foregroundStyle(Color.moonSubtext)
                     .padding(.top, 5)
+
+                Text(today.plainLanguagePhaseName)
+                    .font(.system(size: MoonLayout.todayPhaseTitleTextSize, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color.moonSubtext.opacity(0.90))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.78)
+                    .padding(.top, 12)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
@@ -165,7 +174,7 @@ struct TodayView: View {
             .font(.system(size: MoonLayout.nextMoonLinkTextSize, weight: .semibold, design: .rounded))
             .lineLimit(1)
             .minimumScaleFactor(0.82)
-            .padding(.vertical, 16)
+            .padding(.vertical, 13)
             .contentShape(Rectangle())
             .overlay(alignment: .top) {
                 Rectangle()
@@ -184,7 +193,7 @@ struct TodayView: View {
     }
 
     private var monthPreview: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .firstTextBaseline) {
                 Text("이번 달 미리보기")
                     .font(.system(size: MoonLayout.monthPreviewTitleTextSize, weight: .semibold, design: .rounded))
@@ -218,7 +227,32 @@ struct TodayView: View {
                 }
             }
         }
-        .padding(.top, MoonLayout.monthPreviewTopPadding)
+        .padding(.top, 10)
+    }
+}
+
+private struct TodayLocationChip: View {
+    let locationName: String
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "location.fill")
+                .font(.caption.weight(.bold))
+                .foregroundStyle(Color.moonAqua.opacity(0.76))
+
+            Text(locationName)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(Color.moonText.opacity(0.88))
+                .lineLimit(1)
+                .minimumScaleFactor(0.76)
+        }
+        .padding(.horizontal, 11)
+        .frame(height: 32)
+        .background(Color.moonSurface2.opacity(0.72), in: Capsule())
+        .overlay(
+            Capsule()
+                .stroke(Color.moonAqua.opacity(0.18), lineWidth: 1)
+        )
     }
 }
 

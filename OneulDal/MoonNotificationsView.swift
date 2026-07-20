@@ -21,7 +21,7 @@ struct MoonNotificationsView: View {
                     }
                     .padding(.horizontal, 22)
                     .padding(.top, 16)
-                    .padding(.bottom, 34)
+                    .padding(.bottom, MoonLayout.tabBarContentClearance)
                 }
             }
             .toolbar(.hidden, for: .navigationBar)

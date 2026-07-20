@@ -26,6 +26,8 @@ workflows:
               "OneulDal/AppModel.swift",
               "OneulDal/AstronomyService.swift",
               "OneulDal/NotificationService.swift",
+              "OneulDal/MoonRendering.swift",
+              "OneulDal/MoonLighting.metal",
               "OneulDal/TodayView.swift",
               "OneulDal/MoonCalendarView.swift",
               "OneulDal/MoonPhotoModeView.swift",

@@ -39,7 +39,7 @@ struct MoonCalendarView: View {
                     }
                     .padding(.horizontal, 22)
                     .padding(.top, 14)
-                    .padding(.bottom, 34)
+                    .padding(.bottom, MoonLayout.tabBarContentClearance)
                 }
             }
             .toolbar(.hidden, for: .navigationBar)

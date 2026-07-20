@@ -24,6 +24,8 @@
 		10000000000000000000000F /* MoonPhotoModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000110 /* MoonPhotoModeView.swift */; };
 		100000000000000000000010 /* SwiftAA in Frameworks */ = {isa = PBXBuildFile; productRef = 100000000000000000000501 /* SwiftAA */; };
 		100000000000000000000011 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000111 /* PrivacyInfo.xcprivacy */; };
+		100000000000000000000012 /* MoonRendering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000112 /* MoonRendering.swift */; };
+		100000000000000000000013 /* MoonLighting.metal in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000113 /* MoonLighting.metal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +56,8 @@
 		10000000000000000000010F /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		100000000000000000000110 /* MoonPhotoModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoonPhotoModeView.swift; sourceTree = "<group>"; };
 		100000000000000000000111 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		100000000000000000000112 /* MoonRendering.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoonRendering.swift; sourceTree = "<group>"; };
+		100000000000000000000113 /* MoonLighting.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = MoonLighting.metal; sourceTree = "<group>"; };
 		100000000000000000000201 /* OneulDal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OneulDal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		100000000000000000000202 /* OneulDalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OneulDalTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -98,6 +102,8 @@
 				10000000000000000000010E /* AppModel.swift */,
 				10000000000000000000010F /* NotificationService.swift */,
 				100000000000000000000104 /* DesignSystem.swift */,
+				100000000000000000000112 /* MoonRendering.swift */,
+				100000000000000000000113 /* MoonLighting.metal */,
 				100000000000000000000105 /* TodayView.swift */,
 				100000000000000000000106 /* MoonCalendarView.swift */,
 				100000000000000000000110 /* MoonPhotoModeView.swift */,
@@ -254,6 +260,8 @@
 				10000000000000000000000D /* AppModel.swift in Sources */,
 				10000000000000000000000E /* NotificationService.swift in Sources */,
 				10000000000000000000000F /* MoonPhotoModeView.swift in Sources */,
+				100000000000000000000012 /* MoonRendering.swift in Sources */,
+				100000000000000000000013 /* MoonLighting.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
