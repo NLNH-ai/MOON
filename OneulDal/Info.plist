@@ -28,6 +28,8 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>오늘 달의 월출, 월몰 시간을 선택한 위치 기준으로 계산하기 위해 사용합니다.</string>
 	<key>UILaunchScreen</key>
