@@ -64,9 +64,11 @@ final class AppModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         self.locationManager = locationManager
 
         let city = MoonLocationCatalog.city(id: defaults.string(forKey: DefaultsKey.cityID))
+        let preciseLocationEnabled = defaults.object(forKey: DefaultsKey.preciseLocation) as? Bool ?? false
+        let twentyFourHourTimeEnabled = defaults.object(forKey: DefaultsKey.use24HourTime) as? Bool ?? true
         fallbackCity = city
-        usePreciseLocation = defaults.object(forKey: DefaultsKey.preciseLocation) as? Bool ?? false
-        use24HourTime = defaults.object(forKey: DefaultsKey.use24HourTime) as? Bool ?? true
+        usePreciseLocation = preciseLocationEnabled
+        use24HourTime = twentyFourHourTimeEnabled
         mondayStart = defaults.object(forKey: DefaultsKey.mondayStart) as? Bool ?? true
         compactWidget = defaults.object(forKey: DefaultsKey.compactWidget) as? Bool ?? true
         reminderPreferences = MoonReminderPreferences(
@@ -76,21 +78,23 @@ final class AppModel: NSObject, ObservableObject, CLLocationManagerDelegate {
             moonrise: defaults.object(forKey: DefaultsKey.moonriseReminder) as? Bool ?? false
         )
 
-        if usePreciseLocation,
+        let initialLocation: MoonLocation
+        if preciseLocationEnabled,
            defaults.object(forKey: DefaultsKey.lastLatitude) != nil,
            defaults.object(forKey: DefaultsKey.lastLongitude) != nil {
-            selectedLocation = MoonLocationCatalog.current(
+            initialLocation = MoonLocationCatalog.current(
                 latitude: defaults.double(forKey: DefaultsKey.lastLatitude),
                 longitude: defaults.double(forKey: DefaultsKey.lastLongitude)
             )
         } else {
-            selectedLocation = city
+            initialLocation = city
         }
+        selectedLocation = initialLocation
 
         let initialSnapshot = MoonAstronomyService.snapshot(
             at: referenceDate,
-            location: selectedLocation,
-            use24HourTime: use24HourTime
+            location: initialLocation,
+            use24HourTime: twentyFourHourTimeEnabled
         )
         snapshot = initialSnapshot
         calendarMonthStart = initialSnapshot.currentMonthStart
