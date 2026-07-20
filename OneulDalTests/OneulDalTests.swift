@@ -135,6 +135,68 @@ final class OneulDalTests: XCTestCase {
         XCTAssertNotEqual(MoonLocationCatalog.city(id: "busan"), MoonLocationCatalog.seoul)
     }
 
+    func testMoonIlluminationGeometryMatchesKeyWaxingPhases() {
+        let newMoon = MoonIlluminationGeometry.horizontalBounds(
+            illumination: 0,
+            isWaxing: true,
+            normalizedY: 0
+        )
+        let quarter = MoonIlluminationGeometry.horizontalBounds(
+            illumination: 25,
+            isWaxing: true,
+            normalizedY: 0
+        )
+        let halfMoon = MoonIlluminationGeometry.horizontalBounds(
+            illumination: 50,
+            isWaxing: true,
+            normalizedY: 0
+        )
+        let fullMoon = MoonIlluminationGeometry.horizontalBounds(
+            illumination: 100,
+            isWaxing: true,
+            normalizedY: 0
+        )
+
+        XCTAssertEqual(newMoon.lowerBound, 1, accuracy: 0.001)
+        XCTAssertEqual(newMoon.upperBound, 1, accuracy: 0.001)
+        XCTAssertEqual(quarter.lowerBound, 0.5, accuracy: 0.001)
+        XCTAssertEqual(quarter.upperBound, 1, accuracy: 0.001)
+        XCTAssertEqual(halfMoon.lowerBound, 0, accuracy: 0.001)
+        XCTAssertEqual(halfMoon.upperBound, 1, accuracy: 0.001)
+        XCTAssertEqual(fullMoon.lowerBound, -1, accuracy: 0.001)
+        XCTAssertEqual(fullMoon.upperBound, 1, accuracy: 0.001)
+    }
+
+    func testMoonIlluminationGeometryMirrorsWaningPhaseAndClampsInputs() {
+        let waxing = MoonIlluminationGeometry.horizontalBounds(
+            illumination: 37,
+            isWaxing: true,
+            normalizedY: 0.6
+        )
+        let waning = MoonIlluminationGeometry.horizontalBounds(
+            illumination: 37,
+            isWaxing: false,
+            normalizedY: 0.6
+        )
+        let belowRange = MoonIlluminationGeometry.horizontalBounds(
+            illumination: -20,
+            isWaxing: true,
+            normalizedY: 2
+        )
+        let aboveRange = MoonIlluminationGeometry.horizontalBounds(
+            illumination: 120,
+            isWaxing: true,
+            normalizedY: 0
+        )
+
+        XCTAssertEqual(waxing.lowerBound, -waning.upperBound, accuracy: 0.001)
+        XCTAssertEqual(waxing.upperBound, -waning.lowerBound, accuracy: 0.001)
+        XCTAssertEqual(belowRange.lowerBound, 0, accuracy: 0.001)
+        XCTAssertEqual(belowRange.upperBound, 0, accuracy: 0.001)
+        XCTAssertEqual(aboveRange.lowerBound, -1, accuracy: 0.001)
+        XCTAssertEqual(aboveRange.upperBound, 1, accuracy: 0.001)
+    }
+
     private var seoulCalendar: Calendar {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!

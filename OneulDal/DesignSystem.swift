@@ -21,8 +21,8 @@ enum MoonLayout {
     static let headerLocationTextSize: CGFloat = 21
     static let headerSettingsIconSize: CGFloat = 29
     static let todayMoonDiameter: CGFloat = 256
-    static let moonSurfaceScale: CGFloat = 1.18
-    static let moonSurfaceOffsetYRatio: CGFloat = 0.045
+    static let moonSurfaceScale: CGFloat = 1.27
+    static let moonSurfaceOffsetYRatio: CGFloat = 0.028
     static let todayPhaseTitleTextSize: CGFloat = 24
     static let todayBrightnessTextSize: CGFloat = 15
     static let todayStatusTextSize: CGFloat = 22
@@ -239,37 +239,66 @@ struct MoonPhaseGlyph: View {
     }
 }
 
+struct MoonIlluminationGeometry {
+    static func horizontalBounds(
+        illumination: Int,
+        isWaxing: Bool,
+        normalizedY: CGFloat
+    ) -> ClosedRange<CGFloat> {
+        let fraction = CGFloat(min(max(illumination, 0), 100)) / 100
+        let y = min(max(normalizedY, -1), 1)
+        let limb = sqrt(max(0, 1 - (y * y)))
+        let terminator = (1 - (2 * fraction)) * limb
+
+        if isWaxing {
+            return min(terminator, limb)...max(terminator, limb)
+        }
+
+        return min(-limb, -terminator)...max(-limb, -terminator)
+    }
+}
+
 private struct MoonIlluminationShape: Shape {
     let illumination: Int
     let isWaxing: Bool
 
     func path(in rect: CGRect) -> Path {
-        let fraction = CGFloat(min(max(illumination, 0), 100)) / 100
-        let cosine = (2 * fraction) - 1
         let center = CGPoint(x: rect.midX, y: rect.midY)
         let radius = min(rect.width, rect.height) / 2
-        let top = CGPoint(x: center.x, y: center.y - radius)
-        let bottom = CGPoint(x: center.x, y: center.y + radius)
+        let sampleCount = 180
         var path = Path()
-        path.move(to: top)
 
-        if isWaxing {
-            path.addQuadCurve(
-                to: bottom,
-                control: CGPoint(x: center.x + 2 * radius, y: center.y)
+        for index in 0...sampleCount {
+            let normalizedY = -1 + (2 * CGFloat(index) / CGFloat(sampleCount))
+            let bounds = MoonIlluminationGeometry.horizontalBounds(
+                illumination: illumination,
+                isWaxing: isWaxing,
+                normalizedY: normalizedY
             )
-            path.addQuadCurve(
-                to: top,
-                control: CGPoint(x: center.x - 2 * cosine * radius, y: center.y)
+            let point = CGPoint(
+                x: center.x + (bounds.lowerBound * radius),
+                y: center.y + (normalizedY * radius)
             )
-        } else {
-            path.addQuadCurve(
-                to: bottom,
-                control: CGPoint(x: center.x - 2 * radius, y: center.y)
+
+            if index == 0 {
+                path.move(to: point)
+            } else {
+                path.addLine(to: point)
+            }
+        }
+
+        for index in (0...sampleCount).reversed() {
+            let normalizedY = -1 + (2 * CGFloat(index) / CGFloat(sampleCount))
+            let bounds = MoonIlluminationGeometry.horizontalBounds(
+                illumination: illumination,
+                isWaxing: isWaxing,
+                normalizedY: normalizedY
             )
-            path.addQuadCurve(
-                to: top,
-                control: CGPoint(x: center.x + 2 * cosine * radius, y: center.y)
+            path.addLine(
+                to: CGPoint(
+                    x: center.x + (bounds.upperBound * radius),
+                    y: center.y + (normalizedY * radius)
+                )
             )
         }
 
@@ -286,16 +315,20 @@ struct RealisticMoonView: View {
     var body: some View {
         ZStack {
             moonTexture
-                .saturation(0.75)
-                .brightness(-0.68)
-                .opacity(0.72)
+                .saturation(0.58)
+                .brightness(-0.70)
+                .contrast(0.94)
+                .opacity(0.76)
 
             moonTexture
+                .saturation(0.82)
+                .contrast(1.04)
                 .mask(
                     MoonIlluminationShape(
                         illumination: illumination,
                         isWaxing: isWaxing
                     )
+                    .blur(radius: max(1, size * 0.005))
                 )
         }
         .frame(width: size, height: size)
