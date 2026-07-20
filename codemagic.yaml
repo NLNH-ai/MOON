@@ -52,6 +52,10 @@ workflows:
           xcodebuild -resolvePackageDependencies \
             -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME"
+      - name: Ensure Metal toolchain
+        script: |
+          set -euo pipefail
+          xcodebuild -downloadComponent MetalToolchain
       - name: Pick available iPhone simulator
         script: |
           set -euo pipefail
@@ -118,6 +122,7 @@ workflows:
         script: |
           set -euo pipefail
           xcodebuild -version
+          xcodebuild -downloadComponent MetalToolchain
           xcodebuild -list -project "$XCODE_PROJECT"
           xcodebuild -resolvePackageDependencies \
             -project "$XCODE_PROJECT" \
