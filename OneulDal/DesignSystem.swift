@@ -45,6 +45,34 @@ enum MoonLayout {
     static let tabBarContentClearance: CGFloat = 112
 }
 
+struct TodayLayoutMetrics {
+    let isCompact: Bool
+    let sectionSpacing: CGFloat
+    let topPadding: CGFloat
+    let moonDiameter: CGFloat
+    let heroSpacing: CGFloat
+    let phaseTopPadding: CGFloat
+    let nextMoonVerticalPadding: CGFloat
+    let monthPreviewTopPadding: CGFloat
+    let monthPreviewSpacing: CGFloat
+    let previewMoonCellSize: CGFloat
+    let selectedDayBadgeSize: CGFloat
+
+    init(availableHeight: CGFloat) {
+        isCompact = availableHeight < 850
+        sectionSpacing = isCompact ? 10 : 14
+        topPadding = isCompact ? 8 : 10
+        moonDiameter = isCompact ? 214 : MoonLayout.todayMoonDiameter
+        heroSpacing = isCompact ? 12 : 16
+        phaseTopPadding = isCompact ? 8 : 12
+        nextMoonVerticalPadding = isCompact ? 10 : 13
+        monthPreviewTopPadding = isCompact ? 4 : 10
+        monthPreviewSpacing = isCompact ? 10 : 14
+        previewMoonCellSize = isCompact ? 32 : MoonLayout.previewMoonCellSize
+        selectedDayBadgeSize = isCompact ? 32 : MoonLayout.selectedDayBadgeSize
+    }
+}
+
 struct MoonBackground: View {
     var body: some View {
         ZStack {

@@ -162,6 +162,18 @@ final class OneulDalTests: XCTestCase {
         XCTAssertEqual(aboveRange.depth, 1, accuracy: 0.001)
     }
 
+    func testTodayLayoutCompactsContentAboveTheTabBarOnShortScreens() {
+        let compact = TodayLayoutMetrics(availableHeight: 700)
+        let roomy = TodayLayoutMetrics(availableHeight: 900)
+
+        XCTAssertTrue(compact.isCompact)
+        XCTAssertFalse(roomy.isCompact)
+        XCTAssertLessThan(compact.moonDiameter, roomy.moonDiameter)
+        XCTAssertLessThan(compact.sectionSpacing, roomy.sectionSpacing)
+        XCTAssertLessThan(compact.nextMoonVerticalPadding, roomy.nextMoonVerticalPadding)
+        XCTAssertEqual(roomy.moonDiameter, MoonLayout.todayMoonDiameter)
+    }
+
     private var seoulCalendar: Calendar {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!

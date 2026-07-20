@@ -25,21 +25,25 @@ struct TodayView: View {
     var body: some View {
         NavigationStack {
             TimelineView(.periodic(from: .now, by: 60)) { context in
-                ZStack {
-                    MoonBackground()
+                GeometryReader { geometry in
+                    let metrics = TodayLayoutMetrics(availableHeight: geometry.size.height)
 
-                    ScrollView(showsIndicators: false) {
-                        VStack(spacing: 14) {
-                            topBar
-                            moonHero(at: context.date)
-                            if let nextFullMoon = appModel.nextFullMoon {
-                                nextFullMoonLink(nextFullMoon)
+                    ZStack {
+                        MoonBackground()
+
+                        ScrollView(showsIndicators: false) {
+                            VStack(spacing: metrics.sectionSpacing) {
+                                topBar
+                                moonHero(at: context.date, metrics: metrics)
+                                if let nextFullMoon = appModel.nextFullMoon {
+                                    nextFullMoonLink(nextFullMoon, metrics: metrics)
+                                }
+                                monthPreview(metrics: metrics)
                             }
-                            monthPreview
+                            .padding(.horizontal, 22)
+                            .padding(.top, metrics.topPadding)
+                            .padding(.bottom, MoonLayout.tabBarContentClearance)
                         }
-                        .padding(.horizontal, 22)
-                        .padding(.top, 10)
-                        .padding(.bottom, MoonLayout.tabBarContentClearance)
                     }
                 }
             }
@@ -97,14 +101,14 @@ struct TodayView: View {
         .frame(height: 46)
     }
 
-    private func moonHero(at date: Date) -> some View {
+    private func moonHero(at date: Date, metrics: TodayLayoutMetrics) -> some View {
         let visibility = today.visibilitySummary(at: date)
 
-        return VStack(spacing: 16) {
+        return VStack(spacing: metrics.heroSpacing) {
             RealisticMoonView(
                 illumination: today.illumination,
                 isWaxing: today.isWaxing,
-                size: MoonLayout.todayMoonDiameter
+                size: metrics.moonDiameter
             )
             .frame(maxWidth: .infinity, alignment: .center)
 
@@ -143,14 +147,17 @@ struct TodayView: View {
                     .foregroundStyle(Color.moonSubtext.opacity(0.90))
                     .lineLimit(1)
                     .minimumScaleFactor(0.78)
-                    .padding(.top, 12)
+                    .padding(.top, metrics.phaseTopPadding)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
         }
     }
 
-    private func nextFullMoonLink(_ nextFullMoon: MoonEventSummary) -> some View {
+    private func nextFullMoonLink(
+        _ nextFullMoon: MoonEventSummary,
+        metrics: TodayLayoutMetrics
+    ) -> some View {
         Button {
             selectedTab = .calendar
         } label: {
@@ -174,7 +181,7 @@ struct TodayView: View {
             .font(.system(size: MoonLayout.nextMoonLinkTextSize, weight: .semibold, design: .rounded))
             .lineLimit(1)
             .minimumScaleFactor(0.82)
-            .padding(.vertical, 13)
+            .padding(.vertical, metrics.nextMoonVerticalPadding)
             .contentShape(Rectangle())
             .overlay(alignment: .top) {
                 Rectangle()
@@ -192,8 +199,8 @@ struct TodayView: View {
         .accessibilityHint("달력에서 날짜 보기")
     }
 
-    private var monthPreview: some View {
-        VStack(alignment: .leading, spacing: 14) {
+    private func monthPreview(metrics: TodayLayoutMetrics) -> some View {
+        VStack(alignment: .leading, spacing: metrics.monthPreviewSpacing) {
             HStack(alignment: .firstTextBaseline) {
                 Text("이번 달 미리보기")
                     .font(.system(size: MoonLayout.monthPreviewTitleTextSize, weight: .semibold, design: .rounded))
@@ -222,12 +229,13 @@ struct TodayView: View {
                 ForEach(appModel.snapshot.previewDays) { moonDay in
                     WeekMoonCell(
                         day: moonDay,
-                        isToday: appModel.calendar.isDate(moonDay.date, inSameDayAs: today.date)
+                        isToday: appModel.calendar.isDate(moonDay.date, inSameDayAs: today.date),
+                        metrics: metrics
                     )
                 }
             }
         }
-        .padding(.top, 10)
+        .padding(.top, metrics.monthPreviewTopPadding)
     }
 }
 
@@ -259,12 +267,13 @@ private struct TodayLocationChip: View {
 private struct WeekMoonCell: View {
     let day: MoonDay
     let isToday: Bool
+    let metrics: TodayLayoutMetrics
 
     private var moonSize: CGFloat {
         if isToday {
-            return MoonLayout.selectedDayBadgeSize
+            return metrics.selectedDayBadgeSize
         }
-        return MoonLayout.previewMoonCellSize
+        return metrics.previewMoonCellSize
     }
 
     var body: some View {
@@ -273,8 +282,8 @@ private struct WeekMoonCell: View {
                 .font(.system(size: isToday ? 20 : 18, weight: isToday ? .bold : .medium, design: .rounded))
                 .foregroundStyle(isToday ? Color.moonBackground : Color.moonSubtext)
                 .frame(
-                    width: isToday ? MoonLayout.selectedDayBadgeSize : 32,
-                    height: isToday ? MoonLayout.selectedDayBadgeSize : 32
+                    width: isToday ? metrics.selectedDayBadgeSize : 32,
+                    height: isToday ? metrics.selectedDayBadgeSize : 32
                 )
                 .background(isToday ? Color.moonGold : Color.clear, in: Circle())
 
