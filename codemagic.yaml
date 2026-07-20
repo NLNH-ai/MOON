@@ -23,10 +23,15 @@ workflows:
               "OneulDal.xcodeproj/xcshareddata/xcschemes/OneulDal.xcscheme",
               "OneulDal/OneulDalApp.swift",
               "OneulDal/AppRootView.swift",
+              "OneulDal/AppModel.swift",
+              "OneulDal/AstronomyService.swift",
+              "OneulDal/NotificationService.swift",
               "OneulDal/TodayView.swift",
               "OneulDal/MoonCalendarView.swift",
+              "OneulDal/MoonPhotoModeView.swift",
               "OneulDal/MoonNotificationsView.swift",
-              "OneulDal/Assets.xcassets/MoonWaxingGibbous.imageset/moon-waxing-gibbous@3x.png",
+              "OneulDal/Assets.xcassets/MoonSurface.imageset/moon-surface.png",
+              "OneulDal/PrivacyInfo.xcprivacy",
               "OneulDalTests/OneulDalTests.swift",
           ]
           missing = [path for path in required if not (root / path).exists()]
@@ -36,8 +41,15 @@ workflows:
           for path in (root / "OneulDal/Assets.xcassets").glob("**/*.json"):
               json.loads(path.read_text(encoding="utf-8"))
           plistlib.loads((root / "OneulDal/Info.plist").read_bytes())
-          print("Project files, asset catalogs, and Info.plist are present.")
+          plistlib.loads((root / "OneulDal/PrivacyInfo.xcprivacy").read_bytes())
+          print("Project files, asset catalogs, Info.plist, and PrivacyInfo.xcprivacy are present.")
           PY
+      - name: Resolve Swift packages
+        script: |
+          set -euo pipefail
+          xcodebuild -resolvePackageDependencies \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME"
       - name: Pick available iPhone simulator
         script: |
           set -euo pipefail
@@ -105,6 +117,9 @@ workflows:
           set -euo pipefail
           xcodebuild -version
           xcodebuild -list -project "$XCODE_PROJECT"
+          xcodebuild -resolvePackageDependencies \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME"
       - name: Prepare release build settings
         script: |
           set -euo pipefail

@@ -17,11 +17,10 @@ private enum TodaySheet: Identifiable {
 
 struct TodayView: View {
     @Binding var selectedTab: AppTab
-    @State private var selectedCity = "서울"
+    @EnvironmentObject private var appModel: AppModel
     @State private var activeSheet: TodaySheet?
 
-    private let today = MoonFixtures.today
-    private let nextFullMoon = MoonFixtures.nextFullMoon
+    private var today: MoonDay { appModel.snapshot.today }
 
     var body: some View {
         NavigationStack {
@@ -33,7 +32,9 @@ struct TodayView: View {
                         VStack(spacing: 18) {
                             topBar
                             moonHero(at: context.date)
-                            nextFullMoonLink
+                            if let nextFullMoon = appModel.nextFullMoon {
+                                nextFullMoonLink(nextFullMoon)
+                            }
                             monthPreview
                         }
                         .padding(.horizontal, 22)
@@ -46,7 +47,7 @@ struct TodayView: View {
             .sheet(item: $activeSheet) { sheet in
                 switch sheet {
                 case .location:
-                    LocationPickerSheet(selectedCity: $selectedCity)
+                    LocationPickerSheet()
                         .presentationDetents([.medium])
                 case .settings:
                     SettingsSheet()
@@ -68,10 +69,11 @@ struct TodayView: View {
                 Button {
                     activeSheet = .location
                 } label: {
-                    MoonChip(selectedCity, symbolName: "location.fill", tint: Color.moonAqua)
+                    MoonChip(appModel.selectedLocation.name, symbolName: "location.fill", tint: Color.moonAqua)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("지역 \(selectedCity)")
+                .frame(width: MoonLayout.headerSideRailWidth, alignment: .leading)
+                .accessibilityLabel("지역 \(appModel.selectedLocation.name)")
 
                 Spacer()
 
@@ -88,6 +90,7 @@ struct TodayView: View {
                                 .stroke(.white.opacity(0.08), lineWidth: 1)
                         )
                 }
+                .frame(width: MoonLayout.headerSideRailWidth, alignment: .trailing)
                 .accessibilityLabel("설정")
             }
         }
@@ -98,28 +101,12 @@ struct TodayView: View {
         let visibility = today.visibilitySummary(at: date)
 
         return VStack(spacing: 20) {
-            ZStack {
-                Color.moonBackground
-
-                // Recenter the lunar disc inside the source photo without moving the hero frame.
-                Image("MoonWaxingGibbous")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: MoonLayout.todayMoonDiameter, height: MoonLayout.todayMoonDiameter)
-                    .offset(
-                        x: MoonLayout.todayMoonContentOffsetX,
-                        y: MoonLayout.todayMoonContentOffsetY
-                    )
-            }
-            .frame(width: MoonLayout.todayMoonDiameter, height: MoonLayout.todayMoonDiameter)
-            .clipShape(Circle())
-            .overlay(
-                Circle()
-                    .stroke(Color.moonGold.opacity(0.16), lineWidth: 1)
+            RealisticMoonView(
+                illumination: today.illumination,
+                isWaxing: today.isWaxing,
+                size: MoonLayout.todayMoonDiameter
             )
-            .shadow(color: Color.moonGold.opacity(0.14), radius: 20, x: 0, y: 8)
-            .frame(maxWidth: .infinity)
-            .accessibilityHidden(true)
+            .frame(maxWidth: .infinity, alignment: .center)
 
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -154,7 +141,7 @@ struct TodayView: View {
         }
     }
 
-    private var nextFullMoonLink: some View {
+    private func nextFullMoonLink(_ nextFullMoon: MoonEventSummary) -> some View {
         Button {
             selectedTab = .calendar
         } label: {
@@ -223,12 +210,10 @@ struct TodayView: View {
             }
 
             HStack(spacing: 7) {
-                ForEach(1...7, id: \.self) { day in
-                    let moonDay = MoonFixtures.day(for: day)
-
+                ForEach(appModel.snapshot.previewDays) { moonDay in
                     WeekMoonCell(
                         day: moonDay,
-                        isToday: day == today.day
+                        isToday: appModel.calendar.isDate(moonDay.date, inSameDayAs: today.date)
                     )
                 }
             }
@@ -288,4 +273,5 @@ private struct WeekMoonCell: View {
 
 #Preview {
     TodayView(selectedTab: .constant(.today))
+        .environmentObject(AppModel())
 }

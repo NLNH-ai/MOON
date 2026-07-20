@@ -33,6 +33,8 @@ enum AppTab: String, CaseIterable, Identifiable {
 
 struct AppRootView: View {
     @State private var selectedTab: AppTab = .today
+    @StateObject private var appModel = AppModel()
+    @Environment(\.scenePhase) private var scenePhase
 
     init() {
         Self.configureTabBarAppearance()
@@ -60,6 +62,27 @@ struct AppRootView: View {
         }
         .tint(Color.moonGold.opacity(MoonLayout.tabSelectedOpacity))
         .preferredColorScheme(.dark)
+        .environmentObject(appModel)
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                appModel.refreshForCurrentDate()
+            }
+        }
+        .alert(
+            "확인해 주세요",
+            isPresented: Binding(
+                get: { appModel.userFacingError != nil },
+                set: { isPresented in
+                    if !isPresented { appModel.userFacingError = nil }
+                }
+            )
+        ) {
+            Button("확인", role: .cancel) {
+                appModel.userFacingError = nil
+            }
+        } message: {
+            Text(appModel.userFacingError ?? "")
+        }
     }
 
     private static func configureTabBarAppearance() {

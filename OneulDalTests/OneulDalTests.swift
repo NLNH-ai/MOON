@@ -2,96 +2,30 @@ import XCTest
 @testable import OneulDal
 
 final class OneulDalTests: XCTestCase {
-    func testTodaySummaryUsesPlainLanguage() {
-        let today = MoonFixtures.today
-
-        XCTAssertEqual(today.phaseNameKo, "상현망간의 달")
-        XCTAssertEqual(today.plainLanguagePhaseName, "보름달로 차오르는 중")
-        XCTAssertEqual(today.brightnessText, "밝기 63%")
-        XCTAssertEqual(today.moonAgeText, "달령 9.8일")
-    }
-
-    func testNextFullMoonIsFirstEvent() throws {
-        let event = try XCTUnwrap(MoonFixtures.nextEvents.first)
-
-        XCTAssertEqual(event.title, "다음 보름달")
-        XCTAssertEqual(event.dateText, "7월 7일")
-        XCTAssertEqual(event.countdownText, "5일 뒤")
-    }
-
-    func testVisibilityBeforeTransitShowsOnlyNextChange() throws {
-        let summary = MoonFixtures.today.visibilitySummary(
-            at: try date(hour: 18, minute: 30),
-            calendar: utcCalendar
+    func testAstronomySnapshotUsesRequestedDateAndLocation() throws {
+        let referenceDate = try date(year: 2026, month: 7, day: 2, hour: 12)
+        let snapshot = MoonAstronomyService.snapshot(
+            at: referenceDate,
+            location: MoonLocationCatalog.seoul,
+            use24HourTime: true
         )
 
-        XCTAssertEqual(summary.status, "지금 떠 있어요")
-        XCTAssertEqual(summary.nextEvent, "19:20에 가장 높이 떠요")
+        XCTAssertEqual(snapshot.location, MoonLocationCatalog.seoul)
+        XCTAssertEqual(snapshot.today.day, 2)
+        XCTAssertEqual(snapshot.currentMonthDays.count, 31)
+        XCTAssertEqual(snapshot.previewDays.count, 7)
+        XCTAssertTrue((0...100).contains(snapshot.today.illumination))
+        XCTAssertGreaterThanOrEqual(snapshot.today.moonAge, 0)
     }
 
-    func testVisibilityAfterTransitShowsMoonset() throws {
-        let summary = MoonFixtures.today.visibilitySummary(
-            at: try date(hour: 20, minute: 0),
-            calendar: utcCalendar
+    func testAstronomyMonthIncludesAllMajorPhases() throws {
+        let referenceDate = try date(year: 2026, month: 7, day: 2, hour: 12)
+        let month = MoonAstronomyService.month(
+            containing: referenceDate,
+            location: MoonLocationCatalog.seoul,
+            use24HourTime: true
         )
-
-        XCTAssertEqual(summary.status, "지금 떠 있어요")
-        XCTAssertEqual(summary.nextEvent, "00:48에 져요")
-    }
-
-    func testVisibilityHandlesMoonsetAfterMidnight() throws {
-        let beforeMoonset = MoonFixtures.today.visibilitySummary(
-            at: try date(hour: 0, minute: 30),
-            calendar: utcCalendar
-        )
-        let atMoonset = MoonFixtures.today.visibilitySummary(
-            at: try date(hour: 0, minute: 48),
-            calendar: utcCalendar
-        )
-
-        XCTAssertEqual(beforeMoonset.status, "지금 떠 있어요")
-        XCTAssertEqual(beforeMoonset.nextEvent, "00:48에 져요")
-        XCTAssertEqual(atMoonset.status, "지금은 떠 있지 않아요")
-        XCTAssertEqual(atMoonset.nextEvent, "13:42에 떠요")
-    }
-
-    func testVisibilityAfterSameDayMoonsetShowsTomorrowRise() throws {
-        let newMoon = MoonFixtures.day(for: 21)
-        let summary = newMoon.visibilitySummary(
-            at: try date(hour: 20, minute: 0),
-            calendar: utcCalendar
-        )
-
-        XCTAssertEqual(summary.status, "오늘은 졌어요")
-        XCTAssertEqual(summary.nextEvent, "내일 05:11에 떠요")
-    }
-
-    func testVisibilityGracefullyHandlesInvalidTime() throws {
-        let invalidDay = MoonDay(
-            day: 1,
-            weekday: "수요일",
-            phaseNameKo: "달",
-            phaseNameEn: "Moon",
-            illumination: 50,
-            moonAge: 7,
-            isWaxing: true,
-            isMajorPhase: false,
-            majorPhaseLabel: nil,
-            moonrise: "알 수 없음",
-            transit: "19:20",
-            moonset: "00:48"
-        )
-        let summary = invalidDay.visibilitySummary(
-            at: try date(hour: 18, minute: 30),
-            calendar: utcCalendar
-        )
-
-        XCTAssertEqual(summary.status, "달 위치를 확인할 수 없어요")
-        XCTAssertEqual(summary.nextEvent, "시간 정보를 다시 확인해 주세요")
-    }
-
-    func testCalendarIncludesMajorMoonPhases() {
-        let labels = Set(MoonFixtures.calendarDays.compactMap(\.majorPhaseLabel))
+        let labels = Set(month.days.compactMap(\.majorPhaseLabel))
 
         XCTAssertTrue(labels.contains("삭"))
         XCTAssertTrue(labels.contains("상현"))
@@ -99,22 +33,154 @@ final class OneulDalTests: XCTestCase {
         XCTAssertTrue(labels.contains("하현"))
     }
 
-    private var utcCalendar: Calendar {
+    func testNextFullMoonIsInTheFuture() throws {
+        let referenceDate = try date(year: 2026, month: 7, day: 2, hour: 12)
+        let snapshot = MoonAstronomyService.snapshot(
+            at: referenceDate,
+            location: MoonLocationCatalog.seoul,
+            use24HourTime: true
+        )
+        let fullMoon = try XCTUnwrap(snapshot.nextFullMoon)
+
+        XCTAssertEqual(fullMoon.kind, .fullMoon)
+        XCTAssertGreaterThan(fullMoon.date, referenceDate)
+        XCTAssertFalse(fullMoon.dateText.isEmpty)
+        XCTAssertFalse(fullMoon.countdownText.isEmpty)
+    }
+
+    func testVisibilityBeforeTransitShowsNextHighestPoint() throws {
+        let day = try moonDay(
+            moonriseHour: 13,
+            moonriseMinute: 42,
+            transitHour: 19,
+            transitMinute: 20,
+            moonsetHour: 0,
+            moonsetMinute: 48
+        )
+        let summary = day.visibilitySummary(
+            at: try date(year: 2026, month: 7, day: 2, hour: 18, minute: 30),
+            calendar: seoulCalendar
+        )
+
+        XCTAssertEqual(summary.status, "지금 떠 있어요")
+        XCTAssertEqual(summary.nextEvent, "19:20에 가장 높이 떠요")
+    }
+
+    func testVisibilityHandlesMoonsetAfterMidnight() throws {
+        let day = try moonDay(
+            moonriseHour: 13,
+            moonriseMinute: 42,
+            transitHour: 19,
+            transitMinute: 20,
+            moonsetHour: 0,
+            moonsetMinute: 48
+        )
+        let summary = day.visibilitySummary(
+            at: try date(year: 2026, month: 7, day: 2, hour: 0, minute: 30),
+            calendar: seoulCalendar
+        )
+
+        XCTAssertEqual(summary.status, "지금 떠 있어요")
+        XCTAssertEqual(summary.nextEvent, "00:48에 져요")
+    }
+
+    func testVisibilityGracefullyHandlesUnavailableEvents() throws {
+        let day = MoonDay(
+            date: try date(year: 2026, month: 7, day: 2),
+            timeZoneIdentifier: "Asia/Seoul",
+            use24HourTime: true,
+            phaseNameKo: "달",
+            phaseNameEn: "Moon",
+            illumination: 50,
+            moonAge: 7,
+            isWaxing: true,
+            isMajorPhase: false,
+            majorPhaseLabel: nil,
+            moonriseDate: nil,
+            transitDate: nil,
+            moonsetDate: nil
+        )
+        let summary = day.visibilitySummary(at: Date(), calendar: seoulCalendar)
+
+        XCTAssertEqual(summary.status, "달 위치를 확인할 수 없어요")
+    }
+
+    func testNotificationPlannerCreatesOnlyFutureEnabledPlans() throws {
+        let now = try date(year: 2026, month: 7, day: 2, hour: 12)
+        let snapshot = MoonAstronomyService.snapshot(
+            at: now,
+            location: MoonLocationCatalog.seoul,
+            use24HourTime: true
+        )
+        let preferences = MoonReminderPreferences(
+            fullMoon: true,
+            newMoon: false,
+            quarters: false,
+            moonrise: true
+        )
+        let plans = MoonNotificationPlanner.plans(
+            snapshot: snapshot,
+            preferences: preferences,
+            now: now
+        )
+
+        XCTAssertFalse(plans.isEmpty)
+        XCTAssertTrue(plans.allSatisfy { $0.fireDate > now })
+        XCTAssertTrue(plans.allSatisfy { $0.id.hasPrefix("oneuldal.") })
+        XCTAssertFalse(plans.contains(where: { $0.id.contains("new") }))
+    }
+
+    func testCityCatalogFallsBackToSeoul() {
+        XCTAssertEqual(MoonLocationCatalog.city(id: "missing"), MoonLocationCatalog.seoul)
+        XCTAssertNotEqual(MoonLocationCatalog.city(id: "busan"), MoonLocationCatalog.seoul)
+    }
+
+    private var seoulCalendar: Calendar {
         var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
         return calendar
     }
 
-    private func date(hour: Int, minute: Int) throws -> Date {
+    private func moonDay(
+        moonriseHour: Int,
+        moonriseMinute: Int,
+        transitHour: Int,
+        transitMinute: Int,
+        moonsetHour: Int,
+        moonsetMinute: Int
+    ) throws -> MoonDay {
+        MoonDay(
+            date: try date(year: 2026, month: 7, day: 2),
+            timeZoneIdentifier: "Asia/Seoul",
+            use24HourTime: true,
+            phaseNameKo: "상현망간의 달",
+            phaseNameEn: "Waxing Gibbous",
+            illumination: 63,
+            moonAge: 9.8,
+            isWaxing: true,
+            isMajorPhase: false,
+            majorPhaseLabel: nil,
+            moonriseDate: try date(year: 2026, month: 7, day: 2, hour: moonriseHour, minute: moonriseMinute),
+            transitDate: try date(year: 2026, month: 7, day: 2, hour: transitHour, minute: transitMinute),
+            moonsetDate: try date(year: 2026, month: 7, day: 2, hour: moonsetHour, minute: moonsetMinute)
+        )
+    }
+
+    private func date(
+        year: Int,
+        month: Int,
+        day: Int,
+        hour: Int = 0,
+        minute: Int = 0
+    ) throws -> Date {
         var components = DateComponents()
-        components.calendar = utcCalendar
-        components.timeZone = utcCalendar.timeZone
-        components.year = 2026
-        components.month = 7
-        components.day = 2
+        components.calendar = seoulCalendar
+        components.timeZone = seoulCalendar.timeZone
+        components.year = year
+        components.month = month
+        components.day = day
         components.hour = hour
         components.minute = minute
-
         return try XCTUnwrap(components.date)
     }
 }

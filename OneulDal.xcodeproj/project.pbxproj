@@ -18,6 +18,12 @@
 		100000000000000000000009 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000109 /* Assets.xcassets */; };
 		10000000000000000000000A /* OneulDalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000010A /* OneulDalTests.swift */; };
 		10000000000000000000000B /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 10000000000000000000010B /* XCTest.framework */; };
+		10000000000000000000000C /* AstronomyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000010D /* AstronomyService.swift */; };
+		10000000000000000000000D /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000010E /* AppModel.swift */; };
+		10000000000000000000000E /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000010F /* NotificationService.swift */; };
+		10000000000000000000000F /* MoonPhotoModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000110 /* MoonPhotoModeView.swift */; };
+		100000000000000000000010 /* SwiftAA in Frameworks */ = {isa = PBXBuildFile; productRef = 100000000000000000000501 /* SwiftAA */; };
+		100000000000000000000011 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000111 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +49,11 @@
 		10000000000000000000010A /* OneulDalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneulDalTests.swift; sourceTree = "<group>"; };
 		10000000000000000000010B /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
 		10000000000000000000010C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		10000000000000000000010D /* AstronomyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AstronomyService.swift; sourceTree = "<group>"; };
+		10000000000000000000010E /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		10000000000000000000010F /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		100000000000000000000110 /* MoonPhotoModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoonPhotoModeView.swift; sourceTree = "<group>"; };
+		100000000000000000000111 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		100000000000000000000201 /* OneulDal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OneulDal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		100000000000000000000202 /* OneulDalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OneulDalTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -52,6 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				100000000000000000000010 /* SwiftAA in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,13 +94,18 @@
 				100000000000000000000101 /* OneulDalApp.swift */,
 				100000000000000000000102 /* AppRootView.swift */,
 				100000000000000000000103 /* MoonModels.swift */,
+				10000000000000000000010D /* AstronomyService.swift */,
+				10000000000000000000010E /* AppModel.swift */,
+				10000000000000000000010F /* NotificationService.swift */,
 				100000000000000000000104 /* DesignSystem.swift */,
 				100000000000000000000105 /* TodayView.swift */,
 				100000000000000000000106 /* MoonCalendarView.swift */,
+				100000000000000000000110 /* MoonPhotoModeView.swift */,
 				100000000000000000000107 /* MoonNotificationsView.swift */,
 				100000000000000000000108 /* SettingsView.swift */,
 				100000000000000000000109 /* Assets.xcassets */,
 				10000000000000000000010C /* Info.plist */,
+				100000000000000000000111 /* PrivacyInfo.xcprivacy */,
 			);
 			path = OneulDal;
 			sourceTree = "<group>";
@@ -134,6 +151,9 @@
 			dependencies = (
 			);
 			name = OneulDal;
+			packageProductDependencies = (
+				100000000000000000000501 /* SwiftAA */,
+			);
 			productName = OneulDal;
 			productReference = 100000000000000000000201 /* OneulDal.app */;
 			productType = "com.apple.product-type.application";
@@ -185,6 +205,9 @@
 				Base,
 			);
 			mainGroup = 100000000000000000000040;
+			packageReferences = (
+				100000000000000000000500 /* XCRemoteSwiftPackageReference "SwiftAA" */,
+			);
 			productRefGroup = 100000000000000000000044 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -201,6 +224,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				100000000000000000000009 /* Assets.xcassets in Resources */,
+				100000000000000000000011 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,6 +250,10 @@
 				100000000000000000000006 /* MoonCalendarView.swift in Sources */,
 				100000000000000000000007 /* MoonNotificationsView.swift in Sources */,
 				100000000000000000000008 /* SettingsView.swift in Sources */,
+				10000000000000000000000C /* AstronomyService.swift in Sources */,
+				10000000000000000000000D /* AppModel.swift in Sources */,
+				10000000000000000000000E /* NotificationService.swift in Sources */,
+				10000000000000000000000F /* MoonPhotoModeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -494,6 +522,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		100000000000000000000500 /* XCRemoteSwiftPackageReference "SwiftAA" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onekiloparsec/SwiftAA.git";
+			requirement = {
+				kind = exactVersion;
+				version = 3.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		100000000000000000000501 /* SwiftAA */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 100000000000000000000500 /* XCRemoteSwiftPackageReference "SwiftAA" */;
+			productName = SwiftAA;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 100000000000000000000030 /* Project object */;
 }

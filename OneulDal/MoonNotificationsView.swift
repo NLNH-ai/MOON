@@ -1,11 +1,11 @@
 import SwiftUI
+import UIKit
 
 struct MoonNotificationsView: View {
-    @State private var fullMoonEnabled = true
-    @State private var newMoonEnabled = false
-    @State private var quartersEnabled = false
-    @State private var moonriseEnabled = false
-    @State private var showingPermissionPreview = false
+    @EnvironmentObject private var appModel: AppModel
+    @Environment(\.openURL) private var openURL
+    @State private var pendingReminder: MoonReminderKind?
+    @State private var showingPermissionExplanation = false
 
     var body: some View {
         NavigationStack {
@@ -25,36 +25,55 @@ struct MoonNotificationsView: View {
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
-            .alert("알림 권한 안내", isPresented: $showingPermissionPreview) {
-                Button("확인", role: .cancel) {}
+            .alert("달 알림을 허용할까요?", isPresented: $showingPermissionExplanation) {
+                Button("취소", role: .cancel) {
+                    pendingReminder = nil
+                }
+                Button("계속") {
+                    guard let pendingReminder else { return }
+                    Task {
+                        _ = await appModel.setReminder(pendingReminder, enabled: true)
+                        self.pendingReminder = nil
+                    }
+                }
             } message: {
-                Text("실제 앱에서는 사용자가 알림을 켤 때만 iOS 알림 권한을 요청합니다.")
+                Text("선택한 달의 위상이나 월출 전에 알려드리기 위해 iOS 알림 권한이 필요합니다.")
             }
         }
-    }
-
-    private var enabledCount: Int {
-        [fullMoonEnabled, newMoonEnabled, quartersEnabled, moonriseEnabled].filter { $0 }.count
     }
 
     private var header: some View {
         ScreenHeader(
             title: "알림",
             eyebrow: "달 알림",
-            subtitle: "보름과 월출처럼 놓치기 쉬운 밤만 골라 챙겨요."
+            subtitle: "보고 싶은 달과 월출만 골라 알림을 받습니다."
         ) {
-            MoonChip("\(enabledCount)개 켜짐", symbolName: "bell.badge.fill", tint: Color.moonGold)
+            MoonChip("\(appModel.enabledReminderCount)개 켜짐", symbolName: "bell.badge.fill", tint: Color.moonGold)
         }
     }
 
     private var statusStrip: some View {
         GlassPanel(padding: 14) {
             HStack(spacing: 0) {
-                ReminderStatusMetric(symbol: "moon.stars.fill", title: "주요 위상", value: fullMoonEnabled ? "대기 중" : "꺼짐")
+                ReminderStatusMetric(
+                    symbol: "moon.stars.fill",
+                    title: "달 알림",
+                    value: appModel.enabledReminderCount > 0 ? "예약됨" : "꺼짐"
+                )
                 NotificationStatusDivider()
-                ReminderStatusMetric(symbol: "hand.raised.fill", title: "권한", value: "켤 때 요청", tint: Color.moonAqua)
+                ReminderStatusMetric(
+                    symbol: "hand.raised.fill",
+                    title: "권한",
+                    value: appModel.notificationAuthorization.displayText,
+                    tint: Color.moonAqua
+                )
                 NotificationStatusDivider()
-                ReminderStatusMetric(symbol: "speaker.wave.2.fill", title: "소리", value: "조용히", tint: Color.moonSubtext)
+                ReminderStatusMetric(
+                    symbol: "location.fill",
+                    title: "기준",
+                    value: appModel.selectedLocation.name,
+                    tint: Color.moonSubtext
+                )
             }
         }
         .accessibilityElement(children: .combine)
@@ -63,83 +82,87 @@ struct MoonNotificationsView: View {
     private var reminderList: some View {
         GlassPanel(padding: 14) {
             VStack(alignment: .leading, spacing: 10) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text("받을 알림")
-                        .font(.headline.weight(.semibold))
-                        .foregroundStyle(Color.moonText)
-
-                    Spacer()
-
-                    Text("사용자가 켠 항목만")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(Color.moonSubtext)
-                }
+                Text("받을 알림")
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(Color.moonText)
 
                 NotificationToggleRow(
                     title: "보름달",
-                    subtitle: "3일 전, 1일 전, 정각",
+                    subtitle: "3일 전, 1일 전, 보름 시각",
                     symbol: "moon.circle.fill",
-                    isOn: $fullMoonEnabled
+                    isOn: reminderBinding(for: .fullMoon)
                 )
 
                 NotificationToggleRow(
                     title: "삭",
-                    subtitle: "별 관측하기 좋은 밤",
+                    subtitle: "별을 보기 좋은 달빛 적은 밤",
                     symbol: "circle",
-                    isOn: $newMoonEnabled
+                    isOn: reminderBinding(for: .newMoon)
                 )
 
                 NotificationToggleRow(
                     title: "상현 · 하현",
-                    subtitle: "한 달 흐름을 놓치지 않게",
+                    subtitle: "반달이 되는 시각",
                     symbol: "moonphase.first.quarter",
-                    isOn: $quartersEnabled
+                    isOn: reminderBinding(for: .quarters)
                 )
 
                 NotificationToggleRow(
                     title: "월출",
                     subtitle: "달이 뜨기 1시간 전",
                     symbol: "arrow.up.circle",
-                    isOn: $moonriseEnabled
+                    isOn: reminderBinding(for: .moonrise)
                 )
             }
         }
     }
 
+    @ViewBuilder
     private var permissionCard: some View {
-        GlassPanel(padding: 16) {
-            VStack(alignment: .leading, spacing: 14) {
-                HStack(spacing: 12) {
-                    Image(systemName: "hand.raised.fill")
-                        .font(.headline.weight(.semibold))
-                        .foregroundStyle(Color.moonBackground)
-                        .frame(width: 36, height: 36)
-                        .background(Color.moonAqua, in: Circle())
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("권한은 나중에 요청")
-                            .font(.headline)
-                            .foregroundStyle(Color.moonText)
-
-                        Text("처음 실행 화면은 방해하지 않습니다.")
-                            .font(.caption.weight(.medium))
-                            .foregroundStyle(Color.moonSubtext)
-                    }
-                }
-
-                Text("처음 실행하자마자 알림 권한을 요구하지 않고, 사용자가 알림을 켤 때 이유를 설명합니다.")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.moonSubtext)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Button {
-                    showingPermissionPreview = true
-                } label: {
-                    Label("권한 요청 미리보기", systemImage: "bell.badge")
-                }
-                .buttonStyle(PillButtonStyle())
+        switch appModel.notificationAuthorization {
+        case .notDetermined:
+            PermissionPanel(
+                symbol: "bell.badge",
+                title: "알림은 필요할 때만 요청",
+                message: "위 알림 중 하나를 켜면 이유를 먼저 설명한 뒤 권한을 요청합니다.",
+                buttonTitle: "알림 권한 요청"
+            ) {
+                Task { _ = await appModel.requestNotificationAccess() }
             }
+        case .denied:
+            PermissionPanel(
+                symbol: "bell.slash.fill",
+                title: "알림 권한이 꺼져 있어요",
+                message: "알림을 받으려면 iPhone 설정에서 오늘달 알림을 허용해 주세요.",
+                buttonTitle: "iPhone 설정 열기"
+            ) {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    openURL(url)
+                }
+            }
+        case .authorized, .provisional, .ephemeral:
+            PermissionPanel(
+                symbol: "checkmark.circle.fill",
+                title: "알림 준비 완료",
+                message: "켜 둔 항목은 실제 달의 날짜와 \(appModel.selectedLocation.name) 월출 시간에 맞춰 자동 갱신됩니다.",
+                buttonTitle: nil,
+                action: {}
+            )
         }
+    }
+
+    private func reminderBinding(for kind: MoonReminderKind) -> Binding<Bool> {
+        Binding(
+            get: { appModel.reminderPreferences[kind] },
+            set: { enabled in
+                if enabled && !appModel.notificationAuthorization.allowsScheduling {
+                    pendingReminder = kind
+                    showingPermissionExplanation = true
+                } else {
+                    Task { _ = await appModel.setReminder(kind, enabled: enabled) }
+                }
+            }
+        )
     }
 }
 
@@ -155,22 +178,20 @@ private struct NotificationToggleRow: View {
                 Image(systemName: symbol)
                     .font(.headline.weight(.semibold))
                     .foregroundStyle(isOn ? Color.moonBackground : Color.moonSubtext)
-                    .frame(width: 34, height: 34)
+                    .frame(width: 36, height: 36)
                     .background(isOn ? Color.moonGold : Color.white.opacity(0.06), in: Circle())
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                         .font(.headline)
                         .foregroundStyle(Color.moonText)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.82)
 
                     Text(subtitle)
                         .font(.subheadline)
                         .foregroundStyle(Color.moonSubtext)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.74)
                 }
+                .lineLimit(1)
+                .minimumScaleFactor(0.72)
             }
         }
         .tint(Color.moonGold)
@@ -187,6 +208,34 @@ private struct NotificationToggleRow: View {
     }
 }
 
+private struct PermissionPanel: View {
+    let symbol: String
+    let title: String
+    let message: String
+    let buttonTitle: String?
+    let action: () -> Void
+
+    var body: some View {
+        GlassPanel(padding: 16) {
+            VStack(alignment: .leading, spacing: 14) {
+                Label(title, systemImage: symbol)
+                    .font(.headline)
+                    .foregroundStyle(Color.moonText)
+
+                Text(message)
+                    .font(.subheadline)
+                    .foregroundStyle(Color.moonSubtext)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if let buttonTitle {
+                    Button(buttonTitle, action: action)
+                        .buttonStyle(PillButtonStyle())
+                }
+            }
+        }
+    }
+}
+
 private struct ReminderStatusMetric: View {
     let symbol: String
     let title: String
@@ -194,27 +243,20 @@ private struct ReminderStatusMetric: View {
     var tint: Color = Color.moonGold
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            HStack(spacing: 5) {
-                Image(systemName: symbol)
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(tint)
-
-                Text(title)
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(Color.moonSubtext)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.72)
-            }
+        VStack(alignment: .center, spacing: 5) {
+            Label(title, systemImage: symbol)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(tint)
+                .lineLimit(1)
+                .minimumScaleFactor(0.68)
 
             Text(value)
                 .font(.caption.weight(.bold))
                 .foregroundStyle(Color.moonText)
                 .lineLimit(1)
-                .minimumScaleFactor(0.72)
+                .minimumScaleFactor(0.68)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(minHeight: 44, alignment: .topLeading)
+        .frame(maxWidth: .infinity, minHeight: 44, alignment: .center)
     }
 }
 
@@ -223,10 +265,12 @@ private struct NotificationStatusDivider: View {
         Rectangle()
             .fill(.white.opacity(0.07))
             .frame(width: 1, height: 42)
-            .padding(.horizontal, 8)
+            .padding(.horizontal, 6)
+            .accessibilityHidden(true)
     }
 }
 
 #Preview {
     MoonNotificationsView()
+        .environmentObject(AppModel())
 }

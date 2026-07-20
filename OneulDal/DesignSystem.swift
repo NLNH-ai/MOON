@@ -21,8 +21,8 @@ enum MoonLayout {
     static let headerLocationTextSize: CGFloat = 21
     static let headerSettingsIconSize: CGFloat = 29
     static let todayMoonDiameter: CGFloat = 256
-    static let todayMoonContentOffsetX: CGFloat = 21
-    static let todayMoonContentOffsetY: CGFloat = -3
+    static let moonSurfaceScale: CGFloat = 1.18
+    static let moonSurfaceOffsetYRatio: CGFloat = 0.045
     static let todayPhaseTitleTextSize: CGFloat = 24
     static let todayBrightnessTextSize: CGFloat = 15
     static let todayStatusTextSize: CGFloat = 22
@@ -236,6 +236,87 @@ struct MoonPhaseGlyph: View {
             y: 0
         )
         .accessibilityHidden(true)
+    }
+}
+
+private struct MoonIlluminationShape: Shape {
+    let illumination: Int
+    let isWaxing: Bool
+
+    func path(in rect: CGRect) -> Path {
+        let fraction = CGFloat(min(max(illumination, 0), 100)) / 100
+        let cosine = (2 * fraction) - 1
+        let center = CGPoint(x: rect.midX, y: rect.midY)
+        let radius = min(rect.width, rect.height) / 2
+        let top = CGPoint(x: center.x, y: center.y - radius)
+        let bottom = CGPoint(x: center.x, y: center.y + radius)
+        var path = Path()
+        path.move(to: top)
+
+        if isWaxing {
+            path.addQuadCurve(
+                to: bottom,
+                control: CGPoint(x: center.x + 2 * radius, y: center.y)
+            )
+            path.addQuadCurve(
+                to: top,
+                control: CGPoint(x: center.x - 2 * cosine * radius, y: center.y)
+            )
+        } else {
+            path.addQuadCurve(
+                to: bottom,
+                control: CGPoint(x: center.x - 2 * radius, y: center.y)
+            )
+            path.addQuadCurve(
+                to: top,
+                control: CGPoint(x: center.x + 2 * cosine * radius, y: center.y)
+            )
+        }
+
+        path.closeSubpath()
+        return path
+    }
+}
+
+struct RealisticMoonView: View {
+    let illumination: Int
+    let isWaxing: Bool
+    let size: CGFloat
+
+    var body: some View {
+        ZStack {
+            moonTexture
+                .saturation(0.75)
+                .brightness(-0.68)
+                .opacity(0.72)
+
+            moonTexture
+                .mask(
+                    MoonIlluminationShape(
+                        illumination: illumination,
+                        isWaxing: isWaxing
+                    )
+                )
+        }
+        .frame(width: size, height: size)
+        .background(Color.moonBackground)
+        .clipShape(Circle())
+        .overlay(
+            Circle()
+                .stroke(Color.moonGold.opacity(0.18), lineWidth: 1)
+        )
+        .shadow(color: Color.moonGold.opacity(0.14), radius: 20, x: 0, y: 8)
+        .accessibilityHidden(true)
+    }
+
+    private var moonTexture: some View {
+        Image("MoonSurface")
+            .resizable()
+            .scaledToFill()
+            .frame(width: size, height: size)
+            .scaleEffect(MoonLayout.moonSurfaceScale)
+            .offset(y: size * MoonLayout.moonSurfaceOffsetYRatio)
+            .clipped()
     }
 }
 
