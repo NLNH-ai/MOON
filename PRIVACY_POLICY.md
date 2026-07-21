@@ -31,4 +31,3 @@
 ## 문의
 
 개인정보 또는 앱 사용에 관한 문의는 [오늘달 지원 페이지](https://github.com/NLNH-ai/MOON/issues)에 남겨 주세요.
-
