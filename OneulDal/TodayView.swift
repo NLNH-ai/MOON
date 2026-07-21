@@ -27,22 +27,33 @@ struct TodayView: View {
             TimelineView(.periodic(from: .now, by: 60)) { context in
                 GeometryReader { geometry in
                     let metrics = TodayLayoutMetrics(availableHeight: geometry.size.height)
+                    let minimumContentHeight = max(
+                        0,
+                        geometry.size.height - metrics.topPadding - MoonLayout.tabBarContentSpacing
+                    )
 
                     ZStack {
                         MoonBackground()
 
                         ScrollView(showsIndicators: false) {
-                            VStack(spacing: metrics.sectionSpacing) {
-                                topBar
-                                moonHero(at: context.date, metrics: metrics)
-                                if let nextFullMoon = appModel.nextFullMoon {
-                                    nextFullMoonLink(nextFullMoon, metrics: metrics)
+                            VStack(spacing: 0) {
+                                VStack(spacing: metrics.sectionSpacing) {
+                                    topBar
+                                    moonHero(at: context.date, metrics: metrics)
+                                    if let nextFullMoon = appModel.nextFullMoon {
+                                        nextFullMoonLink(nextFullMoon, metrics: metrics)
+                                    }
                                 }
+
+                                // Keep the preview near the tab bar on tall screens; this collapses before scrolling.
+                                Spacer(minLength: metrics.sectionSpacing)
+
                                 monthPreview(metrics: metrics)
                             }
+                            .frame(minHeight: minimumContentHeight, alignment: .top)
                             .padding(.horizontal, 22)
                             .padding(.top, metrics.topPadding)
-                            .padding(.bottom, MoonLayout.tabBarContentClearance)
+                            .padding(.bottom, MoonLayout.tabBarContentSpacing)
                         }
                     }
                 }

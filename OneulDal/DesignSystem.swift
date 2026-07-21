@@ -20,7 +20,10 @@ enum MoonLayout {
     static let headerTitleTextSize: CGFloat = 34
     static let headerLocationTextSize: CGFloat = 21
     static let headerSettingsIconSize: CGFloat = 29
-    static let todayMoonDiameter: CGFloat = 236
+    static let todayMoonDiameter: CGFloat = 228
+    static let todayMinimumMoonDiameter: CGFloat = 220
+    static let todayComfortableViewportHeight: CGFloat = 790
+    static let todayMinimumViewportHeight: CGFloat = 650
     static let moonSurfaceScale: CGFloat = 1.27
     static let moonSurfaceOffsetYRatio: CGFloat = 0.028
     static let todayDateTextSize: CGFloat = 13
@@ -42,11 +45,11 @@ enum MoonLayout {
     static let tabSelectedOpacity: Double = 0.88
     static let tabNormalOpacity: Double = 0.54
     static let tabBackgroundOpacity: Double = 0.96
-    static let tabBarContentClearance: CGFloat = 112
+    static let tabBarContentSpacing: CGFloat = 22
 }
 
 struct TodayLayoutMetrics {
-    let isCompact: Bool
+    let compressionProgress: CGFloat
     let sectionSpacing: CGFloat
     let topPadding: CGFloat
     let moonDiameter: CGFloat
@@ -59,17 +62,37 @@ struct TodayLayoutMetrics {
     let selectedDayBadgeSize: CGFloat
 
     init(availableHeight: CGFloat) {
-        isCompact = availableHeight < 850
-        sectionSpacing = isCompact ? 10 : 14
-        topPadding = isCompact ? 8 : 10
-        moonDiameter = isCompact ? 214 : MoonLayout.todayMoonDiameter
-        heroSpacing = isCompact ? 12 : 16
-        phaseTopPadding = isCompact ? 8 : 12
-        nextMoonVerticalPadding = isCompact ? 10 : 13
-        monthPreviewTopPadding = isCompact ? 4 : 10
-        monthPreviewSpacing = isCompact ? 10 : 14
-        previewMoonCellSize = isCompact ? 32 : MoonLayout.previewMoonCellSize
-        selectedDayBadgeSize = isCompact ? 32 : MoonLayout.selectedDayBadgeSize
+        let compressionRange = MoonLayout.todayComfortableViewportHeight - MoonLayout.todayMinimumViewportHeight
+        let overflow = max(0, MoonLayout.todayComfortableViewportHeight - availableHeight)
+        let progress = min(max(overflow / compressionRange, 0), 1)
+
+        compressionProgress = progress
+        sectionSpacing = Self.interpolate(from: 14, to: 10, progress: progress)
+        topPadding = Self.interpolate(from: 10, to: 8, progress: progress)
+        moonDiameter = Self.interpolate(
+            from: MoonLayout.todayMoonDiameter,
+            to: MoonLayout.todayMinimumMoonDiameter,
+            progress: progress
+        )
+        heroSpacing = Self.interpolate(from: 16, to: 12, progress: progress)
+        phaseTopPadding = Self.interpolate(from: 12, to: 8, progress: progress)
+        nextMoonVerticalPadding = Self.interpolate(from: 13, to: 10, progress: progress)
+        monthPreviewTopPadding = Self.interpolate(from: 10, to: 4, progress: progress)
+        monthPreviewSpacing = Self.interpolate(from: 14, to: 10, progress: progress)
+        previewMoonCellSize = Self.interpolate(
+            from: MoonLayout.previewMoonCellSize,
+            to: 34,
+            progress: progress
+        )
+        selectedDayBadgeSize = Self.interpolate(
+            from: MoonLayout.selectedDayBadgeSize,
+            to: 33,
+            progress: progress
+        )
+    }
+
+    private static func interpolate(from roomy: CGFloat, to compact: CGFloat, progress: CGFloat) -> CGFloat {
+        roomy + ((compact - roomy) * progress)
     }
 }
 

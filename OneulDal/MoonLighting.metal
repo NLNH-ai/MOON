@@ -23,10 +23,11 @@ using namespace metal;
     float3 surfaceNormal = normalize(float3(diskPosition, surfaceDepth));
     float3 lightDirection = normalize(float3(lightHorizontal, 0.0, lightDepth));
     float diffuse = max(dot(surfaceNormal, lightDirection), 0.0);
+    float illuminatedDiffuse = pow(diffuse, 0.82);
 
     float limbLight = smoothstep(0.0, 0.34, surfaceDepth);
     float earthshine = 0.018 + (0.018 * max(-lightDepth, 0.0));
-    float lightLevel = earthshine + (diffuse * mix(0.84, 1.04, limbLight));
+    float lightLevel = earthshine + (illuminatedDiffuse * mix(0.90, 1.10, limbLight));
     float edgeAlpha = 1.0 - smoothstep(0.985, 1.0, radiusSquared);
 
     half4 source = layer.sample(position);

@@ -162,16 +162,23 @@ final class OneulDalTests: XCTestCase {
         XCTAssertEqual(aboveRange.depth, 1, accuracy: 0.001)
     }
 
-    func testTodayLayoutCompactsContentAboveTheTabBarOnShortScreens() {
-        let compact = TodayLayoutMetrics(availableHeight: 700)
+    func testTodayLayoutCompressesGraduallyOnlyWhenTheViewportNeedsIt() {
+        let compact = TodayLayoutMetrics(availableHeight: 620)
+        let intermediate = TodayLayoutMetrics(availableHeight: 720)
         let roomy = TodayLayoutMetrics(availableHeight: 900)
 
-        XCTAssertTrue(compact.isCompact)
-        XCTAssertFalse(roomy.isCompact)
-        XCTAssertLessThan(compact.moonDiameter, roomy.moonDiameter)
-        XCTAssertLessThan(compact.sectionSpacing, roomy.sectionSpacing)
-        XCTAssertLessThan(compact.nextMoonVerticalPadding, roomy.nextMoonVerticalPadding)
-        XCTAssertEqual(roomy.moonDiameter, MoonLayout.todayMoonDiameter)
+        XCTAssertEqual(compact.compressionProgress, 1, accuracy: 0.001)
+        XCTAssertGreaterThan(intermediate.compressionProgress, 0)
+        XCTAssertLessThan(intermediate.compressionProgress, 1)
+        XCTAssertEqual(roomy.compressionProgress, 0, accuracy: 0.001)
+
+        XCTAssertEqual(compact.moonDiameter, MoonLayout.todayMinimumMoonDiameter, accuracy: 0.001)
+        XCTAssertGreaterThan(intermediate.moonDiameter, compact.moonDiameter)
+        XCTAssertLessThan(intermediate.moonDiameter, roomy.moonDiameter)
+        XCTAssertEqual(roomy.moonDiameter, MoonLayout.todayMoonDiameter, accuracy: 0.001)
+        XCTAssertGreaterThanOrEqual(compact.moonDiameter, 220)
+        XCTAssertLessThanOrEqual(roomy.moonDiameter, 228)
+        XCTAssertTrue((CGFloat(20)...CGFloat(24)).contains(MoonLayout.tabBarContentSpacing))
     }
 
     private var seoulCalendar: Calendar {
