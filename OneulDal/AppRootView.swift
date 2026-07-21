@@ -93,8 +93,9 @@ struct AppRootView: View {
         let tabBackground = UIColor(red: 0.030, green: 0.034, blue: 0.047, alpha: CGFloat(MoonLayout.tabBackgroundOpacity))
 
         let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundEffect = nil
+        // Keep the UIKit tab bar translucent so SwiftUI owns the safe-area inset once.
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
         appearance.backgroundColor = tabBackground
         appearance.shadowColor = UIColor.white.withAlphaComponent(0.06)
 
@@ -119,7 +120,7 @@ struct AppRootView: View {
 
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
-        UITabBar.appearance().isTranslucent = false
+        UITabBar.appearance().isTranslucent = true
     }
 
     private static func tabItemAppearance(

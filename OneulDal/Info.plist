@@ -18,6 +18,8 @@
 	</dict>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleDisplayName</key>
+	<string>오늘달</string>
 	<key>CFBundleName</key>
 	<string>오늘달</string>
 	<key>CFBundlePackageType</key>

@@ -32,8 +32,8 @@ struct RealisticMoonView: View {
 
     var body: some View {
         moonTexture
-            .saturation(0.72)
-            .contrast(1.08)
+            .saturation(0.78)
+            .contrast(1.02)
             .layerEffect(
                 ShaderLibrary.moonSphereLighting(
                     .float2(CGSize(width: size, height: size)),
