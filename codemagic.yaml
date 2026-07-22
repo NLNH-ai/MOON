@@ -160,8 +160,7 @@ workflows:
         script: |
           set -euo pipefail
           xcode-project use-profiles \
-            --project "$CM_BUILD_DIR/$XCODE_PROJECT" \
-            --custom-export-options='{"testFlightInternalTestingOnly": true}'
+            --project "$CM_BUILD_DIR/$XCODE_PROJECT"
       - name: Build IPA for TestFlight
         script: |
           set -euo pipefail
