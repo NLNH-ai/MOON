@@ -170,51 +170,84 @@ struct MoonDay: Identifiable, Equatable, Sendable {
         var eventCalendar = suppliedCalendar ?? calendar
         eventCalendar.timeZone = calendar.timeZone
 
-        guard
-            let moonriseDate,
-            let transitDate,
-            let moonsetDate
-        else {
+        let currentMinutes = minutesSinceMidnight(from: date, calendar: eventCalendar)
+        let riseMinutes = moonriseDate.map {
+            minutesSinceMidnight(from: $0, calendar: eventCalendar)
+        }
+        let transitMinutes = transitDate.map {
+            minutesSinceMidnight(from: $0, calendar: eventCalendar)
+        }
+        let setMinutes = moonsetDate.map {
+            minutesSinceMidnight(from: $0, calendar: eventCalendar)
+        }
+
+        guard riseMinutes != nil || setMinutes != nil else {
             return MoonVisibilitySummary(
-                status: "달 위치를 확인할 수 없어요",
-                nextEvent: "극지방 또는 계산 범위를 확인해 주세요"
+                status: "달 뜨는 시간을 불러오지 못했어요",
+                nextEvent: "잠시 후 다시 확인해 주세요"
             )
         }
 
-        let riseMinutes = minutesSinceMidnight(from: moonriseDate, calendar: eventCalendar)
-        let transitMinutes = minutesSinceMidnight(from: transitDate, calendar: eventCalendar)
-        let setMinutes = minutesSinceMidnight(from: moonsetDate, calendar: eventCalendar)
-        let currentMinutes = minutesSinceMidnight(from: date, calendar: eventCalendar)
-        let transitInCycle = transitMinutes < riseMinutes ? transitMinutes + 1_440 : transitMinutes
-        let setInCycle = setMinutes < riseMinutes ? setMinutes + 1_440 : setMinutes
-        let currentInCycle = setInCycle > 1_440 && currentMinutes < setMinutes
-            ? currentMinutes + 1_440
-            : currentMinutes
+        guard let riseMinutes else {
+            guard let setMinutes, currentMinutes < setMinutes else {
+                return MoonVisibilitySummary(
+                    status: "오늘 달은 졌어요",
+                    nextEvent: "다음 월출 시간은 달력에서 확인해 주세요"
+                )
+            }
+
+            return MoonVisibilitySummary(
+                status: "지금 달이 떠 있어요",
+                nextEvent: "\(moonset)에 져요"
+            )
+        }
+
+        let transitInCycle = transitMinutes.map { minutes in
+            minutes < riseMinutes ? minutes + 1_440 : minutes
+        }
+        let setInCycle = setMinutes.map { minutes in
+            minutes < riseMinutes ? minutes + 1_440 : minutes
+        }
+        let currentInCycle: Int
+        if let setMinutes, let setInCycle,
+           setInCycle > 1_440,
+           currentMinutes < setMinutes {
+            currentInCycle = currentMinutes + 1_440
+        } else {
+            currentInCycle = currentMinutes
+        }
 
         if currentInCycle < riseMinutes {
             return MoonVisibilitySummary(
-                status: "지금은 떠 있지 않아요",
-                nextEvent: "\(moonrise)에 떠요"
+                status: "달은 오늘 \(moonrise)에 떠요",
+                nextEvent: "지금은 지평선 아래에 있어요"
             )
         }
 
-        if currentInCycle < transitInCycle {
+        if let setInCycle, currentInCycle >= setInCycle {
             return MoonVisibilitySummary(
-                status: "지금 떠 있어요",
+                status: "오늘 달은 졌어요",
+                nextEvent: "다음 월출 시간은 달력에서 확인해 주세요"
+            )
+        }
+
+        if let transitInCycle, currentInCycle < transitInCycle {
+            return MoonVisibilitySummary(
+                status: "지금 달이 떠 있어요",
                 nextEvent: "\(transit)에 가장 높이 떠요"
             )
         }
 
-        if currentInCycle < setInCycle {
+        if let setInCycle, currentInCycle < setInCycle {
             return MoonVisibilitySummary(
-                status: "지금 떠 있어요",
+                status: "지금 달이 떠 있어요",
                 nextEvent: "\(moonset)에 져요"
             )
         }
 
         return MoonVisibilitySummary(
-            status: "오늘은 졌어요",
-            nextEvent: "내일 달이 뜨는 시간을 확인해 주세요"
+            status: "지금 달이 떠 있어요",
+            nextEvent: "현재 위치 기준으로 표시하고 있어요"
         )
     }
 

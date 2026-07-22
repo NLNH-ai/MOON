@@ -62,8 +62,73 @@ final class OneulDalTests: XCTestCase {
             calendar: seoulCalendar
         )
 
-        XCTAssertEqual(summary.status, "지금 떠 있어요")
+        XCTAssertEqual(summary.status, "지금 달이 떠 있어요")
         XCTAssertEqual(summary.nextEvent, "19:20에 가장 높이 떠요")
+    }
+
+    func testMorningSnapshotUsesNormalBelowHorizonCopy() throws {
+        let referenceDate = try date(year: 2026, month: 7, day: 22, hour: 10, minute: 10)
+        let location = MoonLocation(
+            id: "gwangju-test",
+            name: "광주",
+            latitude: 35.1595,
+            longitude: 126.8526,
+            timeZoneIdentifier: "Asia/Seoul",
+            isCurrentLocation: true
+        )
+        let day = MoonAstronomyService.day(
+            at: referenceDate,
+            location: location,
+            use24HourTime: true
+        )
+        let summary = day.visibilitySummary(at: referenceDate, calendar: seoulCalendar)
+
+        XCTAssertTrue(summary.status.hasPrefix("달은 오늘 "))
+        XCTAssertTrue(summary.status.hasSuffix("에 떠요"))
+        XCTAssertEqual(summary.nextEvent, "지금은 지평선 아래에 있어요")
+    }
+
+    func testVisibilityBeforeMoonrisePrioritizesWhenTheMoonWillRise() throws {
+        let day = try moonDay(
+            moonriseHour: 13,
+            moonriseMinute: 42,
+            transitHour: 19,
+            transitMinute: 20,
+            moonsetHour: 0,
+            moonsetMinute: 48
+        )
+        let summary = day.visibilitySummary(
+            at: try date(year: 2026, month: 7, day: 2, hour: 10, minute: 10),
+            calendar: seoulCalendar
+        )
+
+        XCTAssertEqual(summary.status, "달은 오늘 13:42에 떠요")
+        XCTAssertEqual(summary.nextEvent, "지금은 지평선 아래에 있어요")
+    }
+
+    func testVisibilityBeforeMoonriseDoesNotRequireTransitOrMoonset() throws {
+        let day = MoonDay(
+            date: try date(year: 2026, month: 7, day: 22),
+            timeZoneIdentifier: "Asia/Seoul",
+            use24HourTime: true,
+            phaseNameKo: "상현망간의 달",
+            phaseNameEn: "Waxing Gibbous",
+            illumination: 57,
+            moonAge: 8.4,
+            isWaxing: true,
+            isMajorPhase: false,
+            majorPhaseLabel: nil,
+            moonriseDate: try date(year: 2026, month: 7, day: 22, hour: 13, minute: 5),
+            transitDate: nil,
+            moonsetDate: nil
+        )
+        let summary = day.visibilitySummary(
+            at: try date(year: 2026, month: 7, day: 22, hour: 10, minute: 10),
+            calendar: seoulCalendar
+        )
+
+        XCTAssertEqual(summary.status, "달은 오늘 13:05에 떠요")
+        XCTAssertEqual(summary.nextEvent, "지금은 지평선 아래에 있어요")
     }
 
     func testVisibilityHandlesMoonsetAfterMidnight() throws {
@@ -80,8 +145,26 @@ final class OneulDalTests: XCTestCase {
             calendar: seoulCalendar
         )
 
-        XCTAssertEqual(summary.status, "지금 떠 있어요")
+        XCTAssertEqual(summary.status, "지금 달이 떠 있어요")
         XCTAssertEqual(summary.nextEvent, "00:48에 져요")
+    }
+
+    func testVisibilityAfterMoonsetShowsTodaysNextMoonrise() throws {
+        let day = try moonDay(
+            moonriseHour: 13,
+            moonriseMinute: 42,
+            transitHour: 19,
+            transitMinute: 20,
+            moonsetHour: 0,
+            moonsetMinute: 48
+        )
+        let summary = day.visibilitySummary(
+            at: try date(year: 2026, month: 7, day: 2, hour: 1),
+            calendar: seoulCalendar
+        )
+
+        XCTAssertEqual(summary.status, "달은 오늘 13:42에 떠요")
+        XCTAssertEqual(summary.nextEvent, "지금은 지평선 아래에 있어요")
     }
 
     func testVisibilityGracefullyHandlesUnavailableEvents() throws {
@@ -102,7 +185,8 @@ final class OneulDalTests: XCTestCase {
         )
         let summary = day.visibilitySummary(at: Date(), calendar: seoulCalendar)
 
-        XCTAssertEqual(summary.status, "달 위치를 확인할 수 없어요")
+        XCTAssertEqual(summary.status, "달 뜨는 시간을 불러오지 못했어요")
+        XCTAssertEqual(summary.nextEvent, "잠시 후 다시 확인해 주세요")
     }
 
     func testNotificationPlannerCreatesOnlyFutureEnabledPlans() throws {
