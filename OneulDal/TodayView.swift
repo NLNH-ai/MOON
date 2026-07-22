@@ -290,7 +290,11 @@ private struct WeekMoonCell: View {
     var body: some View {
         VStack(spacing: 8) {
             Text("\(day.day)")
-                .font(.system(size: isToday ? 20 : 18, weight: isToday ? .bold : .medium, design: .rounded))
+                .font(.system(
+                    size: isToday ? MoonLayout.selectedPreviewDayTextSize : MoonLayout.previewDayTextSize,
+                    weight: isToday ? .bold : .medium,
+                    design: .rounded
+                ))
                 .foregroundStyle(isToday ? Color.moonBackground : Color.moonSubtext)
                 .frame(
                     width: isToday ? metrics.selectedDayBadgeSize : 32,
@@ -307,7 +311,7 @@ private struct WeekMoonCell: View {
 
             Text("\(day.illumination)%")
                 .font(.system(
-                    size: isToday ? 17 : 16,
+                    size: isToday ? MoonLayout.selectedPreviewPercentTextSize : MoonLayout.previewPercentTextSize,
                     weight: isToday ? .bold : .medium,
                     design: .rounded
                 ))

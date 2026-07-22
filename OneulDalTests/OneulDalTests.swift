@@ -176,8 +176,8 @@ final class OneulDalTests: XCTestCase {
         XCTAssertGreaterThan(intermediate.moonDiameter, compact.moonDiameter)
         XCTAssertLessThan(intermediate.moonDiameter, roomy.moonDiameter)
         XCTAssertEqual(roomy.moonDiameter, MoonLayout.todayMoonDiameter, accuracy: 0.001)
-        XCTAssertGreaterThanOrEqual(compact.moonDiameter, 220)
-        XCTAssertLessThanOrEqual(roomy.moonDiameter, 228)
+        XCTAssertGreaterThanOrEqual(compact.moonDiameter, 240)
+        XCTAssertLessThanOrEqual(roomy.moonDiameter, 252)
         XCTAssertTrue((CGFloat(20)...CGFloat(24)).contains(MoonLayout.tabBarContentSpacing))
     }
 
