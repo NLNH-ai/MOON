@@ -12,9 +12,9 @@ Artifacts:
 - `OneulDalTests.xcresult`
 - Xcode logs
 
-## TestFlight internal build
+## App Store signed build
 
-Run `ios-testflight` after Apple signing is ready. This workflow creates an App Store signed IPA and uploads it to App Store Connect for TestFlight internal testing.
+Run `ios-testflight` after Apple signing is ready. This workflow creates an App Store signed IPA and uploads it to App Store Connect. The uploaded build can be used for TestFlight and selected for the App Store version after Apple finishes processing it.
 
 Required Codemagic setup:
 
@@ -29,12 +29,12 @@ Required Codemagic setup:
 
 If App Store Connect uses a different bundle id, update `BUNDLE_ID` in `codemagic.yaml` before running the TestFlight workflow.
 
-The workflow uses Codemagic CLI tooling to apply matching App Store signing files:
+The workflow uses Codemagic CLI tooling to apply matching App Store signing files and build the IPA:
 
-- `xcode-project use-profiles --custom-export-options='{"testFlightInternalTestingOnly": true}'`
+- `xcode-project use-profiles --project "$CM_BUILD_DIR/$XCODE_PROJECT"`
 - `xcode-project build-ipa`
 
-The `testFlightInternalTestingOnly` export option is intentional for quick device testing. It avoids external beta review and limits the build to App Store Connect internal tester groups.
+The current workflow does not set `testFlightInternalTestingOnly`, so a successfully processed build can be used for App Store review as well as TestFlight.
 
 ## Trigger
 
@@ -46,3 +46,10 @@ git push origin ios-0.1.0
 ```
 
 The simulator workflow can be run manually from Codemagic for quick validation.
+
+## Current release baseline
+
+- Bundle ID: `com.oneuldal.app`
+- Version: `1.0.0`
+- Uploaded build: `17`
+- Release tag: `ios-0.1.201`
