@@ -69,4 +69,5 @@ SwiftAA는 MIT 라이선스이며 `THIRD_PARTY_NOTICES.md`와 앱 내 오픈 소
 - 프로모션 문구: `docs/app-store/promotional-text-ko.txt`
 - 키워드: `docs/app-store/keywords-ko.txt`
 - 심사 메모: `docs/app-store/review-notes-ko.txt`
+- 6.5형 스크린샷: `docs/app-store/screenshots/6.5-inch/`
 - 6.9형 스크린샷: `docs/app-store/screenshots/6.9-inch/`
