@@ -11,7 +11,7 @@
 - [x] 고객지원 문서
 - [x] App Store 설명, 키워드, 심사 메모
 - [x] 실제 앱 화면 기반 6.9형 스크린샷
-- [ ] GitHub Pages 공개 및 URL 확인
+- [x] GitHub Pages 공개 및 URL 확인
 
 ## App Store Connect에서 확인
 

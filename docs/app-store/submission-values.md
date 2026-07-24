@@ -23,7 +23,7 @@
 | 개인정보 처리방침 URL | `https://nlnh-ai.github.io/MOON/privacy.html` |
 | 마케팅 URL | 비워도 됨 |
 
-GitHub Pages가 공개된 뒤 시크릿 창에서 두 URL을 확인하고 입력합니다.
+두 URL은 2026년 7월 24일 외부 HTTPS 요청에서 `200` 응답을 확인했습니다.
 
 ## 버전
 
